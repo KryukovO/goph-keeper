@@ -25,8 +25,8 @@ type RegistrationRequest struct {
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	Login    string `protobuf:"bytes,1,opt,name=Login,proto3" json:"Login,omitempty"`
-	Password string `protobuf:"bytes,2,opt,name=Password,proto3" json:"Password,omitempty"`
+	Login    string `protobuf:"bytes,1,opt,name=Login,proto3" json:"Login,omitempty"`       // Логин
+	Password string `protobuf:"bytes,2,opt,name=Password,proto3" json:"Password,omitempty"` // Пароль
 }
 
 func (x *RegistrationRequest) Reset() {
@@ -80,7 +80,7 @@ type RegistrationResponse struct {
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	JWT string `protobuf:"bytes,1,opt,name=JWT,proto3" json:"JWT,omitempty"`
+	JWT string `protobuf:"bytes,1,opt,name=JWT,proto3" json:"JWT,omitempty"` // JSON Web Token авторизованного пользователя
 }
 
 func (x *RegistrationResponse) Reset() {
@@ -127,8 +127,8 @@ type AuthorizationRequest struct {
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	Login    string `protobuf:"bytes,1,opt,name=Login,proto3" json:"Login,omitempty"`
-	Password string `protobuf:"bytes,2,opt,name=Password,proto3" json:"Password,omitempty"`
+	Login    string `protobuf:"bytes,1,opt,name=Login,proto3" json:"Login,omitempty"`       // Логин
+	Password string `protobuf:"bytes,2,opt,name=Password,proto3" json:"Password,omitempty"` // Пароль
 }
 
 func (x *AuthorizationRequest) Reset() {
@@ -182,7 +182,7 @@ type AuthorizationResponse struct {
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	JWT string `protobuf:"bytes,1,opt,name=JWT,proto3" json:"JWT,omitempty"`
+	JWT string `protobuf:"bytes,1,opt,name=JWT,proto3" json:"JWT,omitempty"` // JSON Web Token авторизованного пользователя
 }
 
 func (x *AuthorizationResponse) Reset() {

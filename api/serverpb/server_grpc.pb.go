@@ -27,10 +27,10 @@ const (
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type KeeperClient interface {
-	// Registration - выполняет регистрацию пользователя.
+	// Registration выполняет регистрацию пользователя.
 	// Возвращает JSON Web Token, который необхходимо использовать для аутентификации.
 	Registration(ctx context.Context, in *RegistrationRequest, opts ...grpc.CallOption) (*RegistrationResponse, error)
-	// Authorization - выполняет авторизацию пользователя.
+	// Authorization выполняет авторизацию пользователя.
 	// Возвращает JSON Web Token, который необхходимо использовать для аутентификации.
 	Authorization(ctx context.Context, in *AuthorizationRequest, opts ...grpc.CallOption) (*AuthorizationResponse, error)
 }
@@ -65,10 +65,10 @@ func (c *keeperClient) Authorization(ctx context.Context, in *AuthorizationReque
 // All implementations must embed UnimplementedKeeperServer
 // for forward compatibility
 type KeeperServer interface {
-	// Registration - выполняет регистрацию пользователя.
+	// Registration выполняет регистрацию пользователя.
 	// Возвращает JSON Web Token, который необхходимо использовать для аутентификации.
 	Registration(context.Context, *RegistrationRequest) (*RegistrationResponse, error)
-	// Authorization - выполняет авторизацию пользователя.
+	// Authorization выполняет авторизацию пользователя.
 	// Возвращает JSON Web Token, который необхходимо использовать для аутентификации.
 	Authorization(context.Context, *AuthorizationRequest) (*AuthorizationResponse, error)
 	mustEmbedUnimplementedKeeperServer()
