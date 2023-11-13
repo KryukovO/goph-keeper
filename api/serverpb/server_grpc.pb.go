@@ -7,7 +7,10 @@
 package serverpb
 
 import (
+	context "context"
 	grpc "google.golang.org/grpc"
+	codes "google.golang.org/grpc/codes"
+	status "google.golang.org/grpc/status"
 )
 
 // This is a compile-time assertion to ensure that this generated file
@@ -15,12 +18,21 @@ import (
 // Requires gRPC-Go v1.32.0 or later.
 const _ = grpc.SupportPackageIsVersion7
 
-const ()
+const (
+	Keeper_Registration_FullMethodName  = "/server.Keeper/Registration"
+	Keeper_Authorization_FullMethodName = "/server.Keeper/Authorization"
+)
 
 // KeeperClient is the client API for Keeper service.
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type KeeperClient interface {
+	// Registration - выполняет регистрацию пользователя.
+	// Возвращает JSON Web Token, который необхходимо использовать для аутентификации.
+	Registration(ctx context.Context, in *RegistrationRequest, opts ...grpc.CallOption) (*RegistrationResponse, error)
+	// Authorization - выполняет авторизацию пользователя.
+	// Возвращает JSON Web Token, который необхходимо использовать для аутентификации.
+	Authorization(ctx context.Context, in *AuthorizationRequest, opts ...grpc.CallOption) (*AuthorizationResponse, error)
 }
 
 type keeperClient struct {
@@ -31,10 +43,34 @@ func NewKeeperClient(cc grpc.ClientConnInterface) KeeperClient {
 	return &keeperClient{cc}
 }
 
+func (c *keeperClient) Registration(ctx context.Context, in *RegistrationRequest, opts ...grpc.CallOption) (*RegistrationResponse, error) {
+	out := new(RegistrationResponse)
+	err := c.cc.Invoke(ctx, Keeper_Registration_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *keeperClient) Authorization(ctx context.Context, in *AuthorizationRequest, opts ...grpc.CallOption) (*AuthorizationResponse, error) {
+	out := new(AuthorizationResponse)
+	err := c.cc.Invoke(ctx, Keeper_Authorization_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // KeeperServer is the server API for Keeper service.
 // All implementations must embed UnimplementedKeeperServer
 // for forward compatibility
 type KeeperServer interface {
+	// Registration - выполняет регистрацию пользователя.
+	// Возвращает JSON Web Token, который необхходимо использовать для аутентификации.
+	Registration(context.Context, *RegistrationRequest) (*RegistrationResponse, error)
+	// Authorization - выполняет авторизацию пользователя.
+	// Возвращает JSON Web Token, который необхходимо использовать для аутентификации.
+	Authorization(context.Context, *AuthorizationRequest) (*AuthorizationResponse, error)
 	mustEmbedUnimplementedKeeperServer()
 }
 
@@ -42,6 +78,12 @@ type KeeperServer interface {
 type UnimplementedKeeperServer struct {
 }
 
+func (UnimplementedKeeperServer) Registration(context.Context, *RegistrationRequest) (*RegistrationResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method Registration not implemented")
+}
+func (UnimplementedKeeperServer) Authorization(context.Context, *AuthorizationRequest) (*AuthorizationResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method Authorization not implemented")
+}
 func (UnimplementedKeeperServer) mustEmbedUnimplementedKeeperServer() {}
 
 // UnsafeKeeperServer may be embedded to opt out of forward compatibility for this service.
@@ -55,13 +97,58 @@ func RegisterKeeperServer(s grpc.ServiceRegistrar, srv KeeperServer) {
 	s.RegisterService(&Keeper_ServiceDesc, srv)
 }
 
+func _Keeper_Registration_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(RegistrationRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(KeeperServer).Registration(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Keeper_Registration_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(KeeperServer).Registration(ctx, req.(*RegistrationRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Keeper_Authorization_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(AuthorizationRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(KeeperServer).Authorization(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Keeper_Authorization_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(KeeperServer).Authorization(ctx, req.(*AuthorizationRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // Keeper_ServiceDesc is the grpc.ServiceDesc for Keeper service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
 var Keeper_ServiceDesc = grpc.ServiceDesc{
 	ServiceName: "server.Keeper",
 	HandlerType: (*KeeperServer)(nil),
-	Methods:     []grpc.MethodDesc{},
-	Streams:     []grpc.StreamDesc{},
-	Metadata:    "server.proto",
+	Methods: []grpc.MethodDesc{
+		{
+			MethodName: "Registration",
+			Handler:    _Keeper_Registration_Handler,
+		},
+		{
+			MethodName: "Authorization",
+			Handler:    _Keeper_Authorization_Handler,
+		},
+	},
+	Streams:  []grpc.StreamDesc{},
+	Metadata: "server.proto",
 }
