@@ -1,0 +1,7 @@
+syntax = "proto3";
+
+package server;
+
+option go_package="./serverpb";
+
+service Keeper {}
