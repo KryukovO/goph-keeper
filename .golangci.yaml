@@ -33,7 +33,7 @@ linters-settings:
     max-complexity: 10
 
   errcheck:
-    ignore: Write
+    ignore: Write,BindEnv
 
   gocognit:
     min-complexity: 35

@@ -6,10 +6,10 @@ option go_package="./serverpb";
 
 service Keeper {
     // Registration выполняет регистрацию пользователя.
-    // Возвращает JSON Web Token, который необхходимо использовать для аутентификации.
+    // Возвращает JSON Web Token, который необходимо использовать для аутентификации.
     rpc Registration(RegistrationRequest) returns (RegistrationResponse);
     // Authorization выполняет авторизацию пользователя.
-    // Возвращает JSON Web Token, который необхходимо использовать для аутентификации.
+    // Возвращает JSON Web Token, который необходимо использовать для аутентификации.
     rpc Authorization(AuthorizationRequest) returns (AuthorizationResponse);
 }
 
@@ -19,7 +19,7 @@ message RegistrationRequest {
 }
 
 message RegistrationResponse {
-    string JWT = 1; // JSON Web Token авторизованного пользователя
+    string Token = 1; // JSON Web Token авторизованного пользователя
 }
 
 message AuthorizationRequest {
@@ -28,5 +28,5 @@ message AuthorizationRequest {
 }
 
 message AuthorizationResponse {
-    string JWT = 1; // JSON Web Token авторизованного пользователя
+    string Token = 1; // JSON Web Token авторизованного пользователя
 }
