@@ -6,6 +6,7 @@ import (
 
 	_ "github.com/jackc/pgx/v5/stdlib"
 	"github.com/sirupsen/logrus"
+	"github.com/spf13/pflag"
 
 	"github.com/KryukovO/goph-keeper/internal/server/app"
 	"github.com/KryukovO/goph-keeper/internal/server/config"
@@ -25,6 +26,24 @@ func main() {
 	)
 
 	cfg := config.NewConfig()
+
+	helpFlag := false
+
+	pflag.BoolVarP(&helpFlag, "help", "h", false, "Shows gophermart usage")
+
+	pflag.StringVarP(&cfg.Address, "address", "a", cfg.Address, "Address to run HTTP server")
+	pflag.StringVarP(&cfg.DSN, "dsn", "d", cfg.DSN, "URI to database")
+	pflag.StringVar(&cfg.SecretKey, "secret", cfg.SecretKey, "Authorization token encryption key")
+	pflag.DurationVar(&cfg.UserTokenTTL, "tokenttl", cfg.UserTokenTTL, "User token lifetime")
+	pflag.DurationVar(&cfg.RepositoryTimeout, "repotimeout", cfg.RepositoryTimeout, "Repository connection timeout")
+
+	pflag.Parse()
+
+	if helpFlag {
+		pflag.Usage()
+
+		return
+	}
 
 	logger := logrus.New()
 	logger.SetLevel(logrus.DebugLevel)
