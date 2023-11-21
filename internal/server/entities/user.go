@@ -2,15 +2,16 @@
 package entities
 
 import (
-	"crypto/hmac"
-	"crypto/sha256"
-	"encoding/hex"
 	"errors"
 	"math/rand"
 	"time"
 
+	"golang.org/x/crypto/bcrypt"
+
 	"github.com/KryukovO/goph-keeper/pkg/utils"
 )
+
+const PswdEncCost = 14
 
 var ErrInvalidLoginPassword = errors.New("invalid login/password")
 
@@ -26,8 +27,8 @@ type User struct {
 	Salt string
 }
 
-// Encrypt выполняет шифрование SHA-256 поля Password с добавлением соли.
-func (user *User) Encrypt(secret []byte) error {
+// Encrypt выполняет шифрование поля Password с добавлением соли.
+func (user *User) Encrypt() error {
 	if user.Salt == "" {
 		salt, err := utils.GenerateRandomSalt(rand.NewSource(time.Now().UnixNano()))
 		if err != nil {
@@ -37,37 +38,31 @@ func (user *User) Encrypt(secret []byte) error {
 		user.Salt = salt
 	}
 
-	enc := hmac.New(sha256.New, secret)
-
-	_, err := enc.Write([]byte(user.Password + user.Salt))
+	enc, err := bcrypt.GenerateFromPassword([]byte(user.Password+user.Salt), PswdEncCost)
 	if err != nil {
 		return err
 	}
 
-	user.Password = hex.EncodeToString(enc.Sum(nil))
+	user.EncryptedPassword = string(enc)
 
 	return nil
 }
 
-// Validate возвращает ErrInvalidLoginPassword, если результат SHA-256 шифрования Password
-// не соответствует EncryptedPassword с учетом Salt и secret.
+// Validate возвращает ErrInvalidLoginPassword, если Password
+// не соответствует EncryptedPassword с учетом Salt.
 // Всегда nil, если EncryptedPassword не установлен.
 func (user *User) Validate(secret []byte) error {
 	if user.EncryptedPassword == "" {
 		return nil
 	}
 
-	enc := hmac.New(sha256.New, secret)
-
-	_, err := enc.Write([]byte(user.Password + user.Salt))
-	if err != nil {
-		return err
+	err := bcrypt.CompareHashAndPassword([]byte(user.EncryptedPassword), []byte(user.Password+user.Salt))
+	if errors.Is(err, bcrypt.ErrMismatchedHashAndPassword) {
+		return ErrInvalidLoginPassword
 	}
 
-	hash := hex.EncodeToString(enc.Sum(nil))
-
-	if user.EncryptedPassword != hash {
-		return ErrInvalidLoginPassword
+	if err != nil {
+		return err
 	}
 
 	return nil
