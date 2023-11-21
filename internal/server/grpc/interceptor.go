@@ -18,6 +18,7 @@ import (
 // к группе управления пользователями.
 type RequestWithLogin interface {
 	GetLogin() string
+	GetPassword() string
 }
 
 // Manager предназначен для управления interceptors.

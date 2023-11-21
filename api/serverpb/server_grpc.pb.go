@@ -8,6 +8,7 @@ package serverpb
 
 import (
 	context "context"
+	empty "github.com/golang/protobuf/ptypes/empty"
 	grpc "google.golang.org/grpc"
 	codes "google.golang.org/grpc/codes"
 	status "google.golang.org/grpc/status"
@@ -19,8 +20,27 @@ import (
 const _ = grpc.SupportPackageIsVersion7
 
 const (
-	Keeper_Registration_FullMethodName  = "/server.Keeper/Registration"
-	Keeper_Authorization_FullMethodName = "/server.Keeper/Authorization"
+	Keeper_Registration_FullMethodName        = "/server.Keeper/Registration"
+	Keeper_Authorization_FullMethodName       = "/server.Keeper/Authorization"
+	Keeper_AddAuthData_FullMethodName         = "/server.Keeper/AddAuthData"
+	Keeper_AddTextData_FullMethodName         = "/server.Keeper/AddTextData"
+	Keeper_AddBinaryData_FullMethodName       = "/server.Keeper/AddBinaryData"
+	Keeper_AddBankData_FullMethodName         = "/server.Keeper/AddBankData"
+	Keeper_UpdateAuthData_FullMethodName      = "/server.Keeper/UpdateAuthData"
+	Keeper_UpdateTextData_FullMethodName      = "/server.Keeper/UpdateTextData"
+	Keeper_UpdateBinaryData_FullMethodName    = "/server.Keeper/UpdateBinaryData"
+	Keeper_UpdateBankData_FullMethodName      = "/server.Keeper/UpdateBankData"
+	Keeper_DeleteAuthData_FullMethodName      = "/server.Keeper/DeleteAuthData"
+	Keeper_DeleteTextData_FullMethodName      = "/server.Keeper/DeleteTextData"
+	Keeper_DeleteBinaryData_FullMethodName    = "/server.Keeper/DeleteBinaryData"
+	Keeper_DeleteBankData_FullMethodName      = "/server.Keeper/DeleteBankData"
+	Keeper_AuthDataList_FullMethodName        = "/server.Keeper/AuthDataList"
+	Keeper_TextLabelsList_FullMethodName      = "/server.Keeper/TextLabelsList"
+	Keeper_TextData_FullMethodName            = "/server.Keeper/TextData"
+	Keeper_FileNamesList_FullMethodName       = "/server.Keeper/FileNamesList"
+	Keeper_BinaryData_FullMethodName          = "/server.Keeper/BinaryData"
+	Keeper_BankCardNumbersList_FullMethodName = "/server.Keeper/BankCardNumbersList"
+	Keeper_BankCard_FullMethodName            = "/server.Keeper/BankCard"
 )
 
 // KeeperClient is the client API for Keeper service.
@@ -33,6 +53,44 @@ type KeeperClient interface {
 	// Authorization выполняет авторизацию пользователя.
 	// Возвращает JSON Web Token, который необходимо использовать для аутентификации.
 	Authorization(ctx context.Context, in *AuthorizationRequest, opts ...grpc.CallOption) (*AuthorizationResponse, error)
+	// AddAuthData выполняет сохранение пары логин/пароль в репозиторий.
+	AddAuthData(ctx context.Context, in *AddAuthDataRequest, opts ...grpc.CallOption) (*empty.Empty, error)
+	// AddTextData выполняет сохранение текстовых данных в репозиторий.
+	AddTextData(ctx context.Context, in *AddTextDataRequest, opts ...grpc.CallOption) (*empty.Empty, error)
+	// AddBinaryData выполняет сохранение бинарных данных в репозиторий.
+	AddBinaryData(ctx context.Context, opts ...grpc.CallOption) (Keeper_AddBinaryDataClient, error)
+	// AddBankData выполняет сохранение данных банковских карт в репозиторий.
+	AddBankData(ctx context.Context, in *AddBankDataRequest, opts ...grpc.CallOption) (*empty.Empty, error)
+	// UpdateAuthData выполняет обновление пары логин/пароль в репозитории.
+	UpdateAuthData(ctx context.Context, in *UpdateAuthDataRequest, opts ...grpc.CallOption) (*empty.Empty, error)
+	// UpdateTextData выполняет обновление текстовых данных в репозитории.
+	UpdateTextData(ctx context.Context, in *UpdateTextDataRequest, opts ...grpc.CallOption) (*empty.Empty, error)
+	// UpdateBinaryData выполняет обновление бинарных данных в репозитории.
+	UpdateBinaryData(ctx context.Context, opts ...grpc.CallOption) (Keeper_UpdateBinaryDataClient, error)
+	// UpdateBankData выполняет обновление данных банковских карт в репозитории.
+	UpdateBankData(ctx context.Context, in *UpdateBankDataRequest, opts ...grpc.CallOption) (*empty.Empty, error)
+	// DeleteAuthData выполняет удаление пары логин/пароль из репозитория.
+	DeleteAuthData(ctx context.Context, in *DeleteAuthDataRequest, opts ...grpc.CallOption) (*empty.Empty, error)
+	// DeleteTextData выполняет удаление текстовых данных из репозитория.
+	DeleteTextData(ctx context.Context, in *DeleteAuthDataRequest, opts ...grpc.CallOption) (*empty.Empty, error)
+	// DeleteBinaryData выполняет удаление бинарных данных из репозитория.
+	DeleteBinaryData(ctx context.Context, in *DeleteAuthDataRequest, opts ...grpc.CallOption) (*empty.Empty, error)
+	// DeleteBankData выполняет удаление данных банковских карт из репозитория.
+	DeleteBankData(ctx context.Context, in *DeleteAuthDataRequest, opts ...grpc.CallOption) (*empty.Empty, error)
+	// AuthDataList возвращает список сохраненных пар логин/пароль.
+	AuthDataList(ctx context.Context, in *empty.Empty, opts ...grpc.CallOption) (*AuthDataListResponse, error)
+	// TextLabelsList возвращает список заголовков сохранённых текстовых данных.
+	TextLabelsList(ctx context.Context, in *empty.Empty, opts ...grpc.CallOption) (*TextLabelsListResponse, error)
+	// TextData возвращает сохранённые текстовые данные по заголовку.
+	TextData(ctx context.Context, in *TextDataRequest, opts ...grpc.CallOption) (*TextDataResponse, error)
+	// FileNamesList возвращает список сохранённых файлов.
+	FileNamesList(ctx context.Context, in *empty.Empty, opts ...grpc.CallOption) (*FileNamesListResponse, error)
+	// BinaryData возвращает сохранённые бинарные данные по имени файла.
+	BinaryData(ctx context.Context, in *BinaryDataRequest, opts ...grpc.CallOption) (Keeper_BinaryDataClient, error)
+	// BankCardList возвращает список номеров банковских карт.
+	BankCardNumbersList(ctx context.Context, in *empty.Empty, opts ...grpc.CallOption) (*BankCardListResponse, error)
+	// BankCardList возвращает данные банковской карты по номеру.
+	BankCard(ctx context.Context, in *BankCardRequest, opts ...grpc.CallOption) (*BankCardResponse, error)
 }
 
 type keeperClient struct {
@@ -61,6 +119,250 @@ func (c *keeperClient) Authorization(ctx context.Context, in *AuthorizationReque
 	return out, nil
 }
 
+func (c *keeperClient) AddAuthData(ctx context.Context, in *AddAuthDataRequest, opts ...grpc.CallOption) (*empty.Empty, error) {
+	out := new(empty.Empty)
+	err := c.cc.Invoke(ctx, Keeper_AddAuthData_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *keeperClient) AddTextData(ctx context.Context, in *AddTextDataRequest, opts ...grpc.CallOption) (*empty.Empty, error) {
+	out := new(empty.Empty)
+	err := c.cc.Invoke(ctx, Keeper_AddTextData_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *keeperClient) AddBinaryData(ctx context.Context, opts ...grpc.CallOption) (Keeper_AddBinaryDataClient, error) {
+	stream, err := c.cc.NewStream(ctx, &Keeper_ServiceDesc.Streams[0], Keeper_AddBinaryData_FullMethodName, opts...)
+	if err != nil {
+		return nil, err
+	}
+	x := &keeperAddBinaryDataClient{stream}
+	return x, nil
+}
+
+type Keeper_AddBinaryDataClient interface {
+	Send(*AddBinaryDataRequest) error
+	CloseAndRecv() (*empty.Empty, error)
+	grpc.ClientStream
+}
+
+type keeperAddBinaryDataClient struct {
+	grpc.ClientStream
+}
+
+func (x *keeperAddBinaryDataClient) Send(m *AddBinaryDataRequest) error {
+	return x.ClientStream.SendMsg(m)
+}
+
+func (x *keeperAddBinaryDataClient) CloseAndRecv() (*empty.Empty, error) {
+	if err := x.ClientStream.CloseSend(); err != nil {
+		return nil, err
+	}
+	m := new(empty.Empty)
+	if err := x.ClientStream.RecvMsg(m); err != nil {
+		return nil, err
+	}
+	return m, nil
+}
+
+func (c *keeperClient) AddBankData(ctx context.Context, in *AddBankDataRequest, opts ...grpc.CallOption) (*empty.Empty, error) {
+	out := new(empty.Empty)
+	err := c.cc.Invoke(ctx, Keeper_AddBankData_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *keeperClient) UpdateAuthData(ctx context.Context, in *UpdateAuthDataRequest, opts ...grpc.CallOption) (*empty.Empty, error) {
+	out := new(empty.Empty)
+	err := c.cc.Invoke(ctx, Keeper_UpdateAuthData_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *keeperClient) UpdateTextData(ctx context.Context, in *UpdateTextDataRequest, opts ...grpc.CallOption) (*empty.Empty, error) {
+	out := new(empty.Empty)
+	err := c.cc.Invoke(ctx, Keeper_UpdateTextData_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *keeperClient) UpdateBinaryData(ctx context.Context, opts ...grpc.CallOption) (Keeper_UpdateBinaryDataClient, error) {
+	stream, err := c.cc.NewStream(ctx, &Keeper_ServiceDesc.Streams[1], Keeper_UpdateBinaryData_FullMethodName, opts...)
+	if err != nil {
+		return nil, err
+	}
+	x := &keeperUpdateBinaryDataClient{stream}
+	return x, nil
+}
+
+type Keeper_UpdateBinaryDataClient interface {
+	Send(*UpdateBinaryDataRequest) error
+	CloseAndRecv() (*empty.Empty, error)
+	grpc.ClientStream
+}
+
+type keeperUpdateBinaryDataClient struct {
+	grpc.ClientStream
+}
+
+func (x *keeperUpdateBinaryDataClient) Send(m *UpdateBinaryDataRequest) error {
+	return x.ClientStream.SendMsg(m)
+}
+
+func (x *keeperUpdateBinaryDataClient) CloseAndRecv() (*empty.Empty, error) {
+	if err := x.ClientStream.CloseSend(); err != nil {
+		return nil, err
+	}
+	m := new(empty.Empty)
+	if err := x.ClientStream.RecvMsg(m); err != nil {
+		return nil, err
+	}
+	return m, nil
+}
+
+func (c *keeperClient) UpdateBankData(ctx context.Context, in *UpdateBankDataRequest, opts ...grpc.CallOption) (*empty.Empty, error) {
+	out := new(empty.Empty)
+	err := c.cc.Invoke(ctx, Keeper_UpdateBankData_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *keeperClient) DeleteAuthData(ctx context.Context, in *DeleteAuthDataRequest, opts ...grpc.CallOption) (*empty.Empty, error) {
+	out := new(empty.Empty)
+	err := c.cc.Invoke(ctx, Keeper_DeleteAuthData_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *keeperClient) DeleteTextData(ctx context.Context, in *DeleteAuthDataRequest, opts ...grpc.CallOption) (*empty.Empty, error) {
+	out := new(empty.Empty)
+	err := c.cc.Invoke(ctx, Keeper_DeleteTextData_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *keeperClient) DeleteBinaryData(ctx context.Context, in *DeleteAuthDataRequest, opts ...grpc.CallOption) (*empty.Empty, error) {
+	out := new(empty.Empty)
+	err := c.cc.Invoke(ctx, Keeper_DeleteBinaryData_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *keeperClient) DeleteBankData(ctx context.Context, in *DeleteAuthDataRequest, opts ...grpc.CallOption) (*empty.Empty, error) {
+	out := new(empty.Empty)
+	err := c.cc.Invoke(ctx, Keeper_DeleteBankData_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *keeperClient) AuthDataList(ctx context.Context, in *empty.Empty, opts ...grpc.CallOption) (*AuthDataListResponse, error) {
+	out := new(AuthDataListResponse)
+	err := c.cc.Invoke(ctx, Keeper_AuthDataList_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *keeperClient) TextLabelsList(ctx context.Context, in *empty.Empty, opts ...grpc.CallOption) (*TextLabelsListResponse, error) {
+	out := new(TextLabelsListResponse)
+	err := c.cc.Invoke(ctx, Keeper_TextLabelsList_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *keeperClient) TextData(ctx context.Context, in *TextDataRequest, opts ...grpc.CallOption) (*TextDataResponse, error) {
+	out := new(TextDataResponse)
+	err := c.cc.Invoke(ctx, Keeper_TextData_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *keeperClient) FileNamesList(ctx context.Context, in *empty.Empty, opts ...grpc.CallOption) (*FileNamesListResponse, error) {
+	out := new(FileNamesListResponse)
+	err := c.cc.Invoke(ctx, Keeper_FileNamesList_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *keeperClient) BinaryData(ctx context.Context, in *BinaryDataRequest, opts ...grpc.CallOption) (Keeper_BinaryDataClient, error) {
+	stream, err := c.cc.NewStream(ctx, &Keeper_ServiceDesc.Streams[2], Keeper_BinaryData_FullMethodName, opts...)
+	if err != nil {
+		return nil, err
+	}
+	x := &keeperBinaryDataClient{stream}
+	if err := x.ClientStream.SendMsg(in); err != nil {
+		return nil, err
+	}
+	if err := x.ClientStream.CloseSend(); err != nil {
+		return nil, err
+	}
+	return x, nil
+}
+
+type Keeper_BinaryDataClient interface {
+	Recv() (*BinaryDataResponse, error)
+	grpc.ClientStream
+}
+
+type keeperBinaryDataClient struct {
+	grpc.ClientStream
+}
+
+func (x *keeperBinaryDataClient) Recv() (*BinaryDataResponse, error) {
+	m := new(BinaryDataResponse)
+	if err := x.ClientStream.RecvMsg(m); err != nil {
+		return nil, err
+	}
+	return m, nil
+}
+
+func (c *keeperClient) BankCardNumbersList(ctx context.Context, in *empty.Empty, opts ...grpc.CallOption) (*BankCardListResponse, error) {
+	out := new(BankCardListResponse)
+	err := c.cc.Invoke(ctx, Keeper_BankCardNumbersList_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *keeperClient) BankCard(ctx context.Context, in *BankCardRequest, opts ...grpc.CallOption) (*BankCardResponse, error) {
+	out := new(BankCardResponse)
+	err := c.cc.Invoke(ctx, Keeper_BankCard_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // KeeperServer is the server API for Keeper service.
 // All implementations must embed UnimplementedKeeperServer
 // for forward compatibility
@@ -71,6 +373,44 @@ type KeeperServer interface {
 	// Authorization выполняет авторизацию пользователя.
 	// Возвращает JSON Web Token, который необходимо использовать для аутентификации.
 	Authorization(context.Context, *AuthorizationRequest) (*AuthorizationResponse, error)
+	// AddAuthData выполняет сохранение пары логин/пароль в репозиторий.
+	AddAuthData(context.Context, *AddAuthDataRequest) (*empty.Empty, error)
+	// AddTextData выполняет сохранение текстовых данных в репозиторий.
+	AddTextData(context.Context, *AddTextDataRequest) (*empty.Empty, error)
+	// AddBinaryData выполняет сохранение бинарных данных в репозиторий.
+	AddBinaryData(Keeper_AddBinaryDataServer) error
+	// AddBankData выполняет сохранение данных банковских карт в репозиторий.
+	AddBankData(context.Context, *AddBankDataRequest) (*empty.Empty, error)
+	// UpdateAuthData выполняет обновление пары логин/пароль в репозитории.
+	UpdateAuthData(context.Context, *UpdateAuthDataRequest) (*empty.Empty, error)
+	// UpdateTextData выполняет обновление текстовых данных в репозитории.
+	UpdateTextData(context.Context, *UpdateTextDataRequest) (*empty.Empty, error)
+	// UpdateBinaryData выполняет обновление бинарных данных в репозитории.
+	UpdateBinaryData(Keeper_UpdateBinaryDataServer) error
+	// UpdateBankData выполняет обновление данных банковских карт в репозитории.
+	UpdateBankData(context.Context, *UpdateBankDataRequest) (*empty.Empty, error)
+	// DeleteAuthData выполняет удаление пары логин/пароль из репозитория.
+	DeleteAuthData(context.Context, *DeleteAuthDataRequest) (*empty.Empty, error)
+	// DeleteTextData выполняет удаление текстовых данных из репозитория.
+	DeleteTextData(context.Context, *DeleteAuthDataRequest) (*empty.Empty, error)
+	// DeleteBinaryData выполняет удаление бинарных данных из репозитория.
+	DeleteBinaryData(context.Context, *DeleteAuthDataRequest) (*empty.Empty, error)
+	// DeleteBankData выполняет удаление данных банковских карт из репозитория.
+	DeleteBankData(context.Context, *DeleteAuthDataRequest) (*empty.Empty, error)
+	// AuthDataList возвращает список сохраненных пар логин/пароль.
+	AuthDataList(context.Context, *empty.Empty) (*AuthDataListResponse, error)
+	// TextLabelsList возвращает список заголовков сохранённых текстовых данных.
+	TextLabelsList(context.Context, *empty.Empty) (*TextLabelsListResponse, error)
+	// TextData возвращает сохранённые текстовые данные по заголовку.
+	TextData(context.Context, *TextDataRequest) (*TextDataResponse, error)
+	// FileNamesList возвращает список сохранённых файлов.
+	FileNamesList(context.Context, *empty.Empty) (*FileNamesListResponse, error)
+	// BinaryData возвращает сохранённые бинарные данные по имени файла.
+	BinaryData(*BinaryDataRequest, Keeper_BinaryDataServer) error
+	// BankCardList возвращает список номеров банковских карт.
+	BankCardNumbersList(context.Context, *empty.Empty) (*BankCardListResponse, error)
+	// BankCardList возвращает данные банковской карты по номеру.
+	BankCard(context.Context, *BankCardRequest) (*BankCardResponse, error)
 	mustEmbedUnimplementedKeeperServer()
 }
 
@@ -83,6 +423,63 @@ func (UnimplementedKeeperServer) Registration(context.Context, *RegistrationRequ
 }
 func (UnimplementedKeeperServer) Authorization(context.Context, *AuthorizationRequest) (*AuthorizationResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Authorization not implemented")
+}
+func (UnimplementedKeeperServer) AddAuthData(context.Context, *AddAuthDataRequest) (*empty.Empty, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method AddAuthData not implemented")
+}
+func (UnimplementedKeeperServer) AddTextData(context.Context, *AddTextDataRequest) (*empty.Empty, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method AddTextData not implemented")
+}
+func (UnimplementedKeeperServer) AddBinaryData(Keeper_AddBinaryDataServer) error {
+	return status.Errorf(codes.Unimplemented, "method AddBinaryData not implemented")
+}
+func (UnimplementedKeeperServer) AddBankData(context.Context, *AddBankDataRequest) (*empty.Empty, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method AddBankData not implemented")
+}
+func (UnimplementedKeeperServer) UpdateAuthData(context.Context, *UpdateAuthDataRequest) (*empty.Empty, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method UpdateAuthData not implemented")
+}
+func (UnimplementedKeeperServer) UpdateTextData(context.Context, *UpdateTextDataRequest) (*empty.Empty, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method UpdateTextData not implemented")
+}
+func (UnimplementedKeeperServer) UpdateBinaryData(Keeper_UpdateBinaryDataServer) error {
+	return status.Errorf(codes.Unimplemented, "method UpdateBinaryData not implemented")
+}
+func (UnimplementedKeeperServer) UpdateBankData(context.Context, *UpdateBankDataRequest) (*empty.Empty, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method UpdateBankData not implemented")
+}
+func (UnimplementedKeeperServer) DeleteAuthData(context.Context, *DeleteAuthDataRequest) (*empty.Empty, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method DeleteAuthData not implemented")
+}
+func (UnimplementedKeeperServer) DeleteTextData(context.Context, *DeleteAuthDataRequest) (*empty.Empty, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method DeleteTextData not implemented")
+}
+func (UnimplementedKeeperServer) DeleteBinaryData(context.Context, *DeleteAuthDataRequest) (*empty.Empty, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method DeleteBinaryData not implemented")
+}
+func (UnimplementedKeeperServer) DeleteBankData(context.Context, *DeleteAuthDataRequest) (*empty.Empty, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method DeleteBankData not implemented")
+}
+func (UnimplementedKeeperServer) AuthDataList(context.Context, *empty.Empty) (*AuthDataListResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method AuthDataList not implemented")
+}
+func (UnimplementedKeeperServer) TextLabelsList(context.Context, *empty.Empty) (*TextLabelsListResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method TextLabelsList not implemented")
+}
+func (UnimplementedKeeperServer) TextData(context.Context, *TextDataRequest) (*TextDataResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method TextData not implemented")
+}
+func (UnimplementedKeeperServer) FileNamesList(context.Context, *empty.Empty) (*FileNamesListResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method FileNamesList not implemented")
+}
+func (UnimplementedKeeperServer) BinaryData(*BinaryDataRequest, Keeper_BinaryDataServer) error {
+	return status.Errorf(codes.Unimplemented, "method BinaryData not implemented")
+}
+func (UnimplementedKeeperServer) BankCardNumbersList(context.Context, *empty.Empty) (*BankCardListResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method BankCardNumbersList not implemented")
+}
+func (UnimplementedKeeperServer) BankCard(context.Context, *BankCardRequest) (*BankCardResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method BankCard not implemented")
 }
 func (UnimplementedKeeperServer) mustEmbedUnimplementedKeeperServer() {}
 
@@ -133,6 +530,367 @@ func _Keeper_Authorization_Handler(srv interface{}, ctx context.Context, dec fun
 	return interceptor(ctx, in, info, handler)
 }
 
+func _Keeper_AddAuthData_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(AddAuthDataRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(KeeperServer).AddAuthData(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Keeper_AddAuthData_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(KeeperServer).AddAuthData(ctx, req.(*AddAuthDataRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Keeper_AddTextData_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(AddTextDataRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(KeeperServer).AddTextData(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Keeper_AddTextData_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(KeeperServer).AddTextData(ctx, req.(*AddTextDataRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Keeper_AddBinaryData_Handler(srv interface{}, stream grpc.ServerStream) error {
+	return srv.(KeeperServer).AddBinaryData(&keeperAddBinaryDataServer{stream})
+}
+
+type Keeper_AddBinaryDataServer interface {
+	SendAndClose(*empty.Empty) error
+	Recv() (*AddBinaryDataRequest, error)
+	grpc.ServerStream
+}
+
+type keeperAddBinaryDataServer struct {
+	grpc.ServerStream
+}
+
+func (x *keeperAddBinaryDataServer) SendAndClose(m *empty.Empty) error {
+	return x.ServerStream.SendMsg(m)
+}
+
+func (x *keeperAddBinaryDataServer) Recv() (*AddBinaryDataRequest, error) {
+	m := new(AddBinaryDataRequest)
+	if err := x.ServerStream.RecvMsg(m); err != nil {
+		return nil, err
+	}
+	return m, nil
+}
+
+func _Keeper_AddBankData_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(AddBankDataRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(KeeperServer).AddBankData(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Keeper_AddBankData_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(KeeperServer).AddBankData(ctx, req.(*AddBankDataRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Keeper_UpdateAuthData_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(UpdateAuthDataRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(KeeperServer).UpdateAuthData(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Keeper_UpdateAuthData_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(KeeperServer).UpdateAuthData(ctx, req.(*UpdateAuthDataRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Keeper_UpdateTextData_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(UpdateTextDataRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(KeeperServer).UpdateTextData(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Keeper_UpdateTextData_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(KeeperServer).UpdateTextData(ctx, req.(*UpdateTextDataRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Keeper_UpdateBinaryData_Handler(srv interface{}, stream grpc.ServerStream) error {
+	return srv.(KeeperServer).UpdateBinaryData(&keeperUpdateBinaryDataServer{stream})
+}
+
+type Keeper_UpdateBinaryDataServer interface {
+	SendAndClose(*empty.Empty) error
+	Recv() (*UpdateBinaryDataRequest, error)
+	grpc.ServerStream
+}
+
+type keeperUpdateBinaryDataServer struct {
+	grpc.ServerStream
+}
+
+func (x *keeperUpdateBinaryDataServer) SendAndClose(m *empty.Empty) error {
+	return x.ServerStream.SendMsg(m)
+}
+
+func (x *keeperUpdateBinaryDataServer) Recv() (*UpdateBinaryDataRequest, error) {
+	m := new(UpdateBinaryDataRequest)
+	if err := x.ServerStream.RecvMsg(m); err != nil {
+		return nil, err
+	}
+	return m, nil
+}
+
+func _Keeper_UpdateBankData_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(UpdateBankDataRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(KeeperServer).UpdateBankData(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Keeper_UpdateBankData_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(KeeperServer).UpdateBankData(ctx, req.(*UpdateBankDataRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Keeper_DeleteAuthData_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(DeleteAuthDataRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(KeeperServer).DeleteAuthData(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Keeper_DeleteAuthData_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(KeeperServer).DeleteAuthData(ctx, req.(*DeleteAuthDataRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Keeper_DeleteTextData_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(DeleteAuthDataRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(KeeperServer).DeleteTextData(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Keeper_DeleteTextData_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(KeeperServer).DeleteTextData(ctx, req.(*DeleteAuthDataRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Keeper_DeleteBinaryData_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(DeleteAuthDataRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(KeeperServer).DeleteBinaryData(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Keeper_DeleteBinaryData_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(KeeperServer).DeleteBinaryData(ctx, req.(*DeleteAuthDataRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Keeper_DeleteBankData_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(DeleteAuthDataRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(KeeperServer).DeleteBankData(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Keeper_DeleteBankData_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(KeeperServer).DeleteBankData(ctx, req.(*DeleteAuthDataRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Keeper_AuthDataList_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(empty.Empty)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(KeeperServer).AuthDataList(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Keeper_AuthDataList_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(KeeperServer).AuthDataList(ctx, req.(*empty.Empty))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Keeper_TextLabelsList_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(empty.Empty)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(KeeperServer).TextLabelsList(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Keeper_TextLabelsList_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(KeeperServer).TextLabelsList(ctx, req.(*empty.Empty))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Keeper_TextData_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(TextDataRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(KeeperServer).TextData(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Keeper_TextData_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(KeeperServer).TextData(ctx, req.(*TextDataRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Keeper_FileNamesList_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(empty.Empty)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(KeeperServer).FileNamesList(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Keeper_FileNamesList_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(KeeperServer).FileNamesList(ctx, req.(*empty.Empty))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Keeper_BinaryData_Handler(srv interface{}, stream grpc.ServerStream) error {
+	m := new(BinaryDataRequest)
+	if err := stream.RecvMsg(m); err != nil {
+		return err
+	}
+	return srv.(KeeperServer).BinaryData(m, &keeperBinaryDataServer{stream})
+}
+
+type Keeper_BinaryDataServer interface {
+	Send(*BinaryDataResponse) error
+	grpc.ServerStream
+}
+
+type keeperBinaryDataServer struct {
+	grpc.ServerStream
+}
+
+func (x *keeperBinaryDataServer) Send(m *BinaryDataResponse) error {
+	return x.ServerStream.SendMsg(m)
+}
+
+func _Keeper_BankCardNumbersList_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(empty.Empty)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(KeeperServer).BankCardNumbersList(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Keeper_BankCardNumbersList_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(KeeperServer).BankCardNumbersList(ctx, req.(*empty.Empty))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Keeper_BankCard_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(BankCardRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(KeeperServer).BankCard(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Keeper_BankCard_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(KeeperServer).BankCard(ctx, req.(*BankCardRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // Keeper_ServiceDesc is the grpc.ServiceDesc for Keeper service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -148,7 +906,87 @@ var Keeper_ServiceDesc = grpc.ServiceDesc{
 			MethodName: "Authorization",
 			Handler:    _Keeper_Authorization_Handler,
 		},
+		{
+			MethodName: "AddAuthData",
+			Handler:    _Keeper_AddAuthData_Handler,
+		},
+		{
+			MethodName: "AddTextData",
+			Handler:    _Keeper_AddTextData_Handler,
+		},
+		{
+			MethodName: "AddBankData",
+			Handler:    _Keeper_AddBankData_Handler,
+		},
+		{
+			MethodName: "UpdateAuthData",
+			Handler:    _Keeper_UpdateAuthData_Handler,
+		},
+		{
+			MethodName: "UpdateTextData",
+			Handler:    _Keeper_UpdateTextData_Handler,
+		},
+		{
+			MethodName: "UpdateBankData",
+			Handler:    _Keeper_UpdateBankData_Handler,
+		},
+		{
+			MethodName: "DeleteAuthData",
+			Handler:    _Keeper_DeleteAuthData_Handler,
+		},
+		{
+			MethodName: "DeleteTextData",
+			Handler:    _Keeper_DeleteTextData_Handler,
+		},
+		{
+			MethodName: "DeleteBinaryData",
+			Handler:    _Keeper_DeleteBinaryData_Handler,
+		},
+		{
+			MethodName: "DeleteBankData",
+			Handler:    _Keeper_DeleteBankData_Handler,
+		},
+		{
+			MethodName: "AuthDataList",
+			Handler:    _Keeper_AuthDataList_Handler,
+		},
+		{
+			MethodName: "TextLabelsList",
+			Handler:    _Keeper_TextLabelsList_Handler,
+		},
+		{
+			MethodName: "TextData",
+			Handler:    _Keeper_TextData_Handler,
+		},
+		{
+			MethodName: "FileNamesList",
+			Handler:    _Keeper_FileNamesList_Handler,
+		},
+		{
+			MethodName: "BankCardNumbersList",
+			Handler:    _Keeper_BankCardNumbersList_Handler,
+		},
+		{
+			MethodName: "BankCard",
+			Handler:    _Keeper_BankCard_Handler,
+		},
 	},
-	Streams:  []grpc.StreamDesc{},
+	Streams: []grpc.StreamDesc{
+		{
+			StreamName:    "AddBinaryData",
+			Handler:       _Keeper_AddBinaryData_Handler,
+			ClientStreams: true,
+		},
+		{
+			StreamName:    "UpdateBinaryData",
+			Handler:       _Keeper_UpdateBinaryData_Handler,
+			ClientStreams: true,
+		},
+		{
+			StreamName:    "BinaryData",
+			Handler:       _Keeper_BinaryData_Handler,
+			ServerStreams: true,
+		},
+	},
 	Metadata: "server.proto",
 }

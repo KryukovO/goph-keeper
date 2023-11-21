@@ -4,6 +4,8 @@ package server;
 
 option go_package="./serverpb";
 
+import "google/protobuf/empty.proto";
+
 service Keeper {
     // Registration выполняет регистрацию пользователя.
     // Возвращает JSON Web Token, который необходимо использовать для аутентификации.
@@ -11,6 +13,48 @@ service Keeper {
     // Authorization выполняет авторизацию пользователя.
     // Возвращает JSON Web Token, который необходимо использовать для аутентификации.
     rpc Authorization(AuthorizationRequest) returns (AuthorizationResponse);
+    
+    // AddAuthData выполняет сохранение пары логин/пароль в репозиторий.
+    rpc AddAuthData(AddAuthDataRequest) returns (google.protobuf.Empty);
+    // AddTextData выполняет сохранение текстовых данных в репозиторий.
+    rpc AddTextData(AddTextDataRequest) returns (google.protobuf.Empty);
+    // AddBinaryData выполняет сохранение бинарных данных в репозиторий.
+    rpc AddBinaryData(stream AddBinaryDataRequest) returns (google.protobuf.Empty);
+    // AddBankData выполняет сохранение данных банковских карт в репозиторий.
+    rpc AddBankData(AddBankDataRequest) returns (google.protobuf.Empty);
+    
+    // UpdateAuthData выполняет обновление пары логин/пароль в репозитории.
+    rpc UpdateAuthData(UpdateAuthDataRequest) returns (google.protobuf.Empty);
+    // UpdateTextData выполняет обновление текстовых данных в репозитории.
+    rpc UpdateTextData(UpdateTextDataRequest) returns (google.protobuf.Empty);
+    // UpdateBinaryData выполняет обновление бинарных данных в репозитории.
+    rpc UpdateBinaryData(stream UpdateBinaryDataRequest) returns (google.protobuf.Empty);
+    // UpdateBankData выполняет обновление данных банковских карт в репозитории.
+    rpc UpdateBankData(UpdateBankDataRequest) returns (google.protobuf.Empty);
+    
+    // DeleteAuthData выполняет удаление пары логин/пароль из репозитория.
+    rpc DeleteAuthData(DeleteAuthDataRequest) returns (google.protobuf.Empty);
+    // DeleteTextData выполняет удаление текстовых данных из репозитория.
+    rpc DeleteTextData(DeleteAuthDataRequest) returns (google.protobuf.Empty);
+    // DeleteBinaryData выполняет удаление бинарных данных из репозитория.
+    rpc DeleteBinaryData(DeleteAuthDataRequest) returns (google.protobuf.Empty);
+    // DeleteBankData выполняет удаление данных банковских карт из репозитория.
+    rpc DeleteBankData(DeleteAuthDataRequest) returns (google.protobuf.Empty);
+
+    // AuthDataList возвращает список сохраненных пар логин/пароль.
+    rpc AuthDataList(google.protobuf.Empty) returns (AuthDataListResponse);
+    // TextLabelsList возвращает список заголовков сохранённых текстовых данных.
+    rpc TextLabelsList(google.protobuf.Empty) returns (TextLabelsListResponse);
+    // TextData возвращает сохранённые текстовые данные по заголовку.
+    rpc TextData(TextDataRequest) returns (TextDataResponse);
+    // FileNamesList возвращает список сохранённых файлов.
+    rpc FileNamesList(google.protobuf.Empty) returns (FileNamesListResponse);
+    // BinaryData возвращает сохранённые бинарные данные по имени файла.
+    rpc BinaryData(BinaryDataRequest) returns (stream BinaryDataResponse);
+    // BankCardList возвращает список номеров банковских карт.
+    rpc BankCardNumbersList(google.protobuf.Empty) returns (BankCardListResponse);
+    // BankCardList возвращает данные банковской карты по номеру.
+    rpc BankCard(BankCardRequest) returns (BankCardResponse);
 }
 
 message RegistrationRequest {
@@ -29,4 +73,119 @@ message AuthorizationRequest {
 
 message AuthorizationResponse {
     string Token = 1; // JSON Web Token авторизованного пользователя
+}
+
+message AuthData {
+    string Resource = 1; // Ресурс
+    string Login = 2; // Логин
+    string UserPassword = 3; // Пароль
+    string Metadata = 4; // Метаданные
+}
+
+message TextData {
+    string Label = 1; // Заголовок
+    string Text = 2; // Текст
+    string Metadata = 3; // Метаданные
+}
+
+message BinaryData {
+    string FileName = 1; // Имя файла
+    bytes FileData = 2; // Данные
+}
+
+message BankData {
+    string Number = 1; // Номер карты
+    string CardholderName = 2; // Имя держателя карты
+    string ExpirationDate = 3; // Срок действия карты
+    string CVV = 4; // CVV
+    string Metadata = 5; // Метаданные
+}
+
+message AddAuthDataRequest {
+    AuthData Data = 1; // Данные для сохранения
+}
+
+message AddTextDataRequest {
+    TextData Data = 1; // Данные для сохранения
+}
+
+message AddBinaryDataRequest {
+    BinaryData Data = 1; // Данные для сохранения
+}
+
+message AddBankDataRequest {
+    BankData Data = 1; // Данные для сохранения
+}
+
+message UpdateAuthDataRequest {
+    AuthData Data = 1; // Данные для сохранения
+}
+
+message UpdateTextDataRequest {
+    TextData Data = 1; // Данные для сохранения
+}
+
+message UpdateBinaryDataRequest {
+    BinaryData Data = 1; // Данные для сохранения
+}
+
+message UpdateBankDataRequest {
+    BankData Data = 1; // Данные для сохранения
+}
+
+message DeleteAuthDataRequest {
+    string Resource = 1; // Ресурс
+    string Login = 2; // Логин
+}
+
+message DeleteTextDataRequest {
+    string Label = 1; // Заголовок
+}
+
+message DeleteBinaryDataRequest {
+    string FileName = 1; // Имя файла
+}
+
+message DeleteBankDataRequest {
+    string Number = 1; // Номер карты
+}
+
+message AuthDataListResponse {
+    repeated AuthData Data = 1; // Сохранённые пары логин/пароль
+}
+
+message TextLabelsListResponse {
+    repeated string Labels = 1; // Список заголовков сохранённых текстовых данных
+}
+
+message TextDataRequest {
+    string Label = 1; // Заголовок
+}
+
+message TextDataResponse {
+    TextData Data = 1; // Сохранённые текстовые данные
+}
+
+message FileNamesListResponse {
+    repeated string FileNames = 1; // Имена файлов
+}
+
+message BinaryDataRequest {
+    string FileName = 1; // Имя файла
+}
+
+message BinaryDataResponse {
+    BinaryData Data = 1; // Сохраненные бинарные данные
+}
+
+message BankCardListResponse {
+    repeated string CardNumbers = 1; // Сохраненные номера банковских карт 
+}
+
+message BankCardRequest {
+    string CardNumber = 1; // Номер карты
+}
+
+message BankCardResponse {
+    BankData Data = 1; // Сохранённые данные карты
 }
