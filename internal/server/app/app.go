@@ -1,5 +1,5 @@
 // Package server содержит реализацию сервера.
-package server
+package app
 
 import (
 	"context"
@@ -19,60 +19,60 @@ import (
 )
 
 // Server - реализация сервера.
-type Server struct {
+type App struct {
 	cfg        *config.Config
 	grpcServer *grpc.Server
 	log        *logrus.Logger
 }
 
 // NewServer возвращает объект Server.
-func NewServer(cfg *config.Config, log *logrus.Logger) *Server {
-	return &Server{
+func NewApp(cfg *config.Config, log *logrus.Logger) *App {
+	return &App{
 		cfg: cfg,
 		log: log,
 	}
 }
 
 // Run выполняет запуск сервера.
-func (s *Server) Run(ctx context.Context) error {
+func (a *App) Run(ctx context.Context) error {
 	sigCtx, sigCancel := signal.NotifyContext(ctx, syscall.SIGINT, syscall.SIGTERM, syscall.SIGQUIT)
 	defer sigCancel()
 
-	repoCtx, cancel := context.WithTimeout(sigCtx, s.cfg.RepositoryTimeout)
+	repoCtx, cancel := context.WithTimeout(ctx, a.cfg.RepositoryTimeout)
 	defer cancel()
 
-	s.log.Info("Connecting to the repository...")
+	a.log.Info("Connecting to the repository...")
 
-	repo, err := pgrepo.NewPgRepo(repoCtx, s.cfg.DSN)
+	repo, err := pgrepo.NewPgRepo(repoCtx, a.cfg.DSN)
 	if err != nil {
 		return err
 	}
 
-	s.log.Info("Repository connection established")
+	a.log.Info("Repository connection established")
 
-	keeper := usecases.NewKeeperUseCases(repo, s.cfg.RepositoryTimeout)
+	keeper := usecases.NewKeeperUseCases(repo, a.cfg.RepositoryTimeout)
 	defer func() {
 		keeper.Close()
 
-		s.log.Info("Repository connection closed")
+		a.log.Info("Repository connection closed")
 	}()
 
-	itcManager := sgrpc.NewManager([]byte(s.cfg.SecretKey), s.log)
-	s.grpcServer = grpc.NewServer(
+	itcManager := sgrpc.NewManager([]byte(a.cfg.SecretKey), a.log)
+	a.grpcServer = grpc.NewServer(
 		grpc.ChainUnaryInterceptor(
 			itcManager.LoggingInterceptor,
-			itcManager.AuthInterceptor, // NOTE: нужно игнорировать методы Registration и Authorization
+			itcManager.AuthInterceptor,
 		),
 	)
 
-	keeperServer, err := sgrpc.NewKeeperServer(keeper, s.log)
+	keeperServer, err := sgrpc.NewKeeperServer(keeper, a.log)
 	if err != nil {
 		return err
 	}
 
 	group, groupCtx := errgroup.WithContext(ctx)
 
-	group.Go(func() error { return s.runGRPCServer(keeperServer) })
+	group.Go(func() error { return a.runGRPCServer(keeperServer) })
 
 	group.Go(func() error {
 		select {
@@ -81,9 +81,9 @@ func (s *Server) Run(ctx context.Context) error {
 		case <-sigCtx.Done():
 		}
 
-		s.log.Info("Stopping server...")
+		a.log.Info("Stopping server...")
 
-		s.shutdown()
+		a.shutdown()
 
 		return nil
 	})
@@ -91,25 +91,25 @@ func (s *Server) Run(ctx context.Context) error {
 	return group.Wait()
 }
 
-func (s *Server) runGRPCServer(storageServer *sgrpc.KeeperServer) error {
-	s.log.Infof("Run gRPC-server at %s...", s.cfg.Address)
+func (a *App) runGRPCServer(storageServer *sgrpc.KeeperServer) error {
+	a.log.Infof("Run gRPC-server at %s...", a.cfg.Address)
 
-	listen, err := net.Listen("tcp", s.cfg.Address)
+	listen, err := net.Listen("tcp", a.cfg.Address)
 	if err != nil {
 		return err
 	}
 
-	api.RegisterKeeperServer(s.grpcServer, storageServer)
+	api.RegisterKeeperServer(a.grpcServer, storageServer)
 
-	if err := s.grpcServer.Serve(listen); err != nil {
+	if err := a.grpcServer.Serve(listen); err != nil {
 		return err
 	}
 
 	return nil
 }
 
-func (s *Server) shutdown() {
-	s.grpcServer.GracefulStop()
+func (a *App) shutdown() {
+	a.grpcServer.GracefulStop()
 
-	s.log.Info("gRPC-server stopped gracefully")
+	a.log.Info("gRPC-server stopped gracefully")
 }

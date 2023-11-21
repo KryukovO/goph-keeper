@@ -4,9 +4,11 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/KryukovO/goph-keeper/internal/server"
-	"github.com/KryukovO/goph-keeper/internal/server/config"
+	_ "github.com/jackc/pgx/v5/stdlib"
 	"github.com/sirupsen/logrus"
+
+	"github.com/KryukovO/goph-keeper/internal/server/app"
+	"github.com/KryukovO/goph-keeper/internal/server/config"
 )
 
 var (
@@ -31,7 +33,7 @@ func main() {
 		TimestampFormat: "2006-01-02 15:04:05 Z07:00",
 	})
 
-	srv := server.NewServer(cfg, logger)
+	srv := app.NewApp(cfg, logger)
 	if err := srv.Run(context.Background()); err != nil {
 		logger.Fatalf("Server error: %s. Exit(1)", err.Error())
 	}
