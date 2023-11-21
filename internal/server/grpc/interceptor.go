@@ -2,14 +2,23 @@ package grpc
 
 import (
 	"context"
+	"strconv"
 	"time"
 
+	"github.com/KryukovO/goph-keeper/pkg/utils"
 	"github.com/google/uuid"
 	"github.com/sirupsen/logrus"
 	"google.golang.org/grpc"
+	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/metadata"
 	"google.golang.org/grpc/status"
 )
+
+// RequestWithLogin служит для определения принадлежности gRPC-запроса
+// к группе управления пользователями.
+type RequestWithLogin interface {
+	GetLogin() string
+}
 
 // Manager предназначен для управления interceptors.
 type Manager struct {
@@ -26,7 +35,7 @@ func NewManager(secret []byte, log *logrus.Logger) *Manager {
 }
 
 // LoggingInterceptor - выполняет логгирование входящего gRPC запроса.
-func (itc *Manager) LoggingInterceptor(
+func (m *Manager) LoggingInterceptor(
 	ctx context.Context, req interface{},
 	info *grpc.UnaryServerInfo, handler grpc.UnaryHandler,
 ) (interface{}, error) {
@@ -34,7 +43,7 @@ func (itc *Manager) LoggingInterceptor(
 
 	uuidCtx := metadata.AppendToOutgoingContext(ctx, "uuid", uuid.String())
 
-	itc.log.Infof("[%s] received gRPC request: %s", uuid, info.FullMethod)
+	m.log.Infof("[%s] received gRPC request: %s", uuid, info.FullMethod)
 
 	ts := time.Now()
 	resp, err := handler(uuidCtx, req)
@@ -42,12 +51,12 @@ func (itc *Manager) LoggingInterceptor(
 	if err != nil {
 		st, _ := status.FromError(err)
 
-		itc.log.Infof(
+		m.log.Infof(
 			"[%s] query response status: %d; duration: %s",
 			uuid, st.Code(), time.Since(ts),
 		)
 	} else {
-		itc.log.Infof(
+		m.log.Infof(
 			"[%s] query response status: OK; duration: %s",
 			uuid, time.Since(ts),
 		)
@@ -57,10 +66,33 @@ func (itc *Manager) LoggingInterceptor(
 }
 
 // AuthInterceptor - выполняет аутентификацию пользователя из входящего gRPC запроса.
-func (itc *Manager) AuthInterceptor(
+func (m *Manager) AuthInterceptor(
 	ctx context.Context, req interface{},
 	info *grpc.UnaryServerInfo, handler grpc.UnaryHandler,
 ) (interface{}, error) {
-	// NOTE: JWT будет находится в метаданных по ключу 'token'
-	return handler(ctx, req)
+	// Пропускаем запросы на регистрацию и авторизацию
+	if _, ok := req.(RequestWithLogin); ok {
+		return handler(ctx, req)
+	}
+
+	var (
+		token  string
+		userID int64
+	)
+
+	if md, ok := metadata.FromIncomingContext(ctx); ok {
+		values := md.Get("token")
+		if len(values) > 0 {
+			token = values[0]
+		}
+	}
+
+	err := utils.ParseTokenString(&userID, token, m.secret)
+	if err != nil {
+		return nil, status.Error(codes.Unauthenticated, err.Error())
+	}
+
+	userCtx := metadata.AppendToOutgoingContext(ctx, "userID", strconv.FormatInt(userID, 10))
+
+	return handler(userCtx, req)
 }

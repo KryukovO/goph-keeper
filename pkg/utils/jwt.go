@@ -13,7 +13,7 @@ var (
 	// не соответствует HMAC-SHA.
 	ErrUnexpectedSigningMethod = errors.New("unexpected signing method")
 	// ErrTokenIsInvalid возвращается если JWT невалиден.
-	ErrTokenIsInvalid = errors.New("token is invalid")
+	ErrTokenIsInvalid = errors.New("authentication token is invalid")
 )
 
 // Claims описывает полезную нагрузку JWT.
