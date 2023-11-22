@@ -3,33 +3,21 @@ package pgrepo
 
 import (
 	"context"
-	"database/sql"
 
 	"github.com/KryukovO/goph-keeper/internal/server/entities"
+	"github.com/KryukovO/goph-keeper/pkg/postgres"
 )
 
 // PgRepo - репозиторий PostgreSQL.
 type PgRepo struct {
-	db *sql.DB
+	db *postgres.Postgres
 }
 
-// NewPgRepo - создаёт новое подключение к репозиторию PostgreSQL.
-func NewPgRepo(ctx context.Context, dsn string) (*PgRepo, error) {
-	db, err := sql.Open("pgx", dsn)
-	if err != nil {
-		return nil, err
-	}
-
-	s := &PgRepo{
+// NewPgRepo создаёт новый новый объект PgRepo.
+func NewPgRepo(db *postgres.Postgres) *PgRepo {
+	return &PgRepo{
 		db: db,
 	}
-
-	err = s.db.PingContext(ctx)
-	if err != nil {
-		return nil, err
-	}
-
-	return s, nil
 }
 
 // CreateUser выполняет создание пользователя user.
@@ -40,9 +28,4 @@ func (repo *PgRepo) CreateUser(ctx context.Context, user entities.User) (int64, 
 // User выполняет заполнение полей EncryptedPassword и Salt значениями из репозитория.
 func (repo *PgRepo) User(ctx context.Context, user *entities.User) error {
 	return nil
-}
-
-// Close закрывает соединение с репозиторием.
-func (repo *PgRepo) Close() error {
-	return repo.db.Close()
 }

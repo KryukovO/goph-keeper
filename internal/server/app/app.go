@@ -12,6 +12,7 @@ import (
 	sgrpc "github.com/KryukovO/goph-keeper/internal/server/grpc"
 	"github.com/KryukovO/goph-keeper/internal/server/repository/pgrepo"
 	"github.com/KryukovO/goph-keeper/internal/server/usecases"
+	"github.com/KryukovO/goph-keeper/pkg/postgres"
 
 	"github.com/sirupsen/logrus"
 	"golang.org/x/sync/errgroup"
@@ -38,24 +39,26 @@ func (a *App) Run(ctx context.Context) error {
 	sigCtx, sigCancel := signal.NotifyContext(ctx, syscall.SIGINT, syscall.SIGTERM, syscall.SIGQUIT)
 	defer sigCancel()
 
+	a.log.Info("Connecting to the database...")
+
 	repoCtx, cancel := context.WithTimeout(ctx, a.cfg.RepositoryTimeout)
 	defer cancel()
 
-	a.log.Info("Connecting to the repository...")
-
-	repo, err := pgrepo.NewPgRepo(repoCtx, a.cfg.DSN)
+	db, err := postgres.NewPostgres(repoCtx, a.cfg.DSN)
 	if err != nil {
 		return err
 	}
 
-	a.log.Info("Repository connection established")
+	a.log.Info("Database connection established")
 
-	keeper := usecases.NewKeeperUseCases(repo, a.cfg.RepositoryTimeout)
 	defer func() {
-		keeper.Close()
+		db.Close()
 
-		a.log.Info("Repository connection closed")
+		a.log.Info("Database connection closed")
 	}()
+
+	repo := pgrepo.NewPgRepo(db)
+	keeper := usecases.NewKeeperUseCases(repo, a.cfg.RepositoryTimeout)
 
 	itcManager := sgrpc.NewManager([]byte(a.cfg.SecretKey), a.log)
 	a.grpcServer = grpc.NewServer(

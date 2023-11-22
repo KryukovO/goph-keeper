@@ -13,6 +13,4 @@ type Repository interface {
 	CreateUser(ctx context.Context, user entities.User) (userID int64, err error)
 	// User выполняет заполнение полей EncryptedPassword и Salt значениями из репозитория.
 	User(ctx context.Context, user *entities.User) (err error)
-	// Close закрывает соединение с репозиторием.
-	Close() error
 }

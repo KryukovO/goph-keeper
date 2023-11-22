@@ -9,6 +9,4 @@ type UseCases interface {
 	Registration(ctx context.Context, login string, pswd string) (token string, err error)
 	// Authorization выполняет авторизацию пользователя.
 	Authorization(ctx context.Context, login string, pswd string) (token string, err error)
-	// Close выполняет закрытие соединения с репозиторием.
-	Close() error
 }

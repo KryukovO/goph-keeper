@@ -30,8 +30,3 @@ func (uc *KeeperUseCases) Registration(ctx context.Context, login string, pswd s
 func (uc *KeeperUseCases) Authorization(ctx context.Context, login string, pswd string) (string, error) {
 	return "", nil
 }
-
-// Close выполняет закрытие соединения с репозиторием.
-func (uc *KeeperUseCases) Close() error {
-	return uc.repo.Close()
-}
