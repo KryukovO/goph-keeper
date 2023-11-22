@@ -364,8 +364,11 @@ type BinaryData struct {
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	FileName string `protobuf:"bytes,1,opt,name=FileName,proto3" json:"FileName,omitempty"` // Имя файла
-	FileData []byte `protobuf:"bytes,2,opt,name=FileData,proto3" json:"FileData,omitempty"` // Данные
+	// Types that are assignable to Data:
+	//
+	//	*BinaryData_Info
+	//	*BinaryData_Chunk
+	Data isBinaryData_Data `protobuf_oneof:"Data"`
 }
 
 func (x *BinaryData) Reset() {
@@ -400,19 +403,42 @@ func (*BinaryData) Descriptor() ([]byte, []int) {
 	return file_server_proto_rawDescGZIP(), []int{6}
 }
 
-func (x *BinaryData) GetFileName() string {
-	if x != nil {
-		return x.FileName
-	}
-	return ""
-}
-
-func (x *BinaryData) GetFileData() []byte {
-	if x != nil {
-		return x.FileData
+func (m *BinaryData) GetData() isBinaryData_Data {
+	if m != nil {
+		return m.Data
 	}
 	return nil
 }
+
+func (x *BinaryData) GetInfo() *BinaryData_FileInfo {
+	if x, ok := x.GetData().(*BinaryData_Info); ok {
+		return x.Info
+	}
+	return nil
+}
+
+func (x *BinaryData) GetChunk() []byte {
+	if x, ok := x.GetData().(*BinaryData_Chunk); ok {
+		return x.Chunk
+	}
+	return nil
+}
+
+type isBinaryData_Data interface {
+	isBinaryData_Data()
+}
+
+type BinaryData_Info struct {
+	Info *BinaryData_FileInfo `protobuf:"bytes,1,opt,name=Info,proto3,oneof"` // Информация о файле
+}
+
+type BinaryData_Chunk struct {
+	Chunk []byte `protobuf:"bytes,2,opt,name=Chunk,proto3,oneof"` // Фрагмент данных
+}
+
+func (*BinaryData_Info) isBinaryData_Data() {}
+
+func (*BinaryData_Chunk) isBinaryData_Data() {}
 
 type BankData struct {
 	state         protoimpl.MessageState
@@ -1535,6 +1561,61 @@ func (x *BankCardResponse) GetData() *BankData {
 	return nil
 }
 
+type BinaryData_FileInfo struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	FileName string `protobuf:"bytes,1,opt,name=FileName,proto3" json:"FileName,omitempty"` // Имя файла
+	Metadata string `protobuf:"bytes,2,opt,name=Metadata,proto3" json:"Metadata,omitempty"` // Метаданные
+}
+
+func (x *BinaryData_FileInfo) Reset() {
+	*x = BinaryData_FileInfo{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_server_proto_msgTypes[30]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *BinaryData_FileInfo) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*BinaryData_FileInfo) ProtoMessage() {}
+
+func (x *BinaryData_FileInfo) ProtoReflect() protoreflect.Message {
+	mi := &file_server_proto_msgTypes[30]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use BinaryData_FileInfo.ProtoReflect.Descriptor instead.
+func (*BinaryData_FileInfo) Descriptor() ([]byte, []int) {
+	return file_server_proto_rawDescGZIP(), []int{6, 0}
+}
+
+func (x *BinaryData_FileInfo) GetFileName() string {
+	if x != nil {
+		return x.FileName
+	}
+	return ""
+}
+
+func (x *BinaryData_FileInfo) GetMetadata() string {
+	if x != nil {
+		return x.Metadata
+	}
+	return ""
+}
+
 var File_server_proto protoreflect.FileDescriptor
 
 var file_server_proto_rawDesc = []byte{
@@ -1569,11 +1650,17 @@ var file_server_proto_rawDesc = []byte{
 	0x62, 0x65, 0x6c, 0x12, 0x12, 0x0a, 0x04, 0x54, 0x65, 0x78, 0x74, 0x18, 0x02, 0x20, 0x01, 0x28,
 	0x09, 0x52, 0x04, 0x54, 0x65, 0x78, 0x74, 0x12, 0x1a, 0x0a, 0x08, 0x4d, 0x65, 0x74, 0x61, 0x64,
 	0x61, 0x74, 0x61, 0x18, 0x03, 0x20, 0x01, 0x28, 0x09, 0x52, 0x08, 0x4d, 0x65, 0x74, 0x61, 0x64,
-	0x61, 0x74, 0x61, 0x22, 0x44, 0x0a, 0x0a, 0x42, 0x69, 0x6e, 0x61, 0x72, 0x79, 0x44, 0x61, 0x74,
-	0x61, 0x12, 0x1a, 0x0a, 0x08, 0x46, 0x69, 0x6c, 0x65, 0x4e, 0x61, 0x6d, 0x65, 0x18, 0x01, 0x20,
-	0x01, 0x28, 0x09, 0x52, 0x08, 0x46, 0x69, 0x6c, 0x65, 0x4e, 0x61, 0x6d, 0x65, 0x12, 0x1a, 0x0a,
-	0x08, 0x46, 0x69, 0x6c, 0x65, 0x44, 0x61, 0x74, 0x61, 0x18, 0x02, 0x20, 0x01, 0x28, 0x0c, 0x52,
-	0x08, 0x46, 0x69, 0x6c, 0x65, 0x44, 0x61, 0x74, 0x61, 0x22, 0xa0, 0x01, 0x0a, 0x08, 0x42, 0x61,
+	0x61, 0x74, 0x61, 0x22, 0xa3, 0x01, 0x0a, 0x0a, 0x42, 0x69, 0x6e, 0x61, 0x72, 0x79, 0x44, 0x61,
+	0x74, 0x61, 0x12, 0x31, 0x0a, 0x04, 0x49, 0x6e, 0x66, 0x6f, 0x18, 0x01, 0x20, 0x01, 0x28, 0x0b,
+	0x32, 0x1b, 0x2e, 0x73, 0x65, 0x72, 0x76, 0x65, 0x72, 0x2e, 0x42, 0x69, 0x6e, 0x61, 0x72, 0x79,
+	0x44, 0x61, 0x74, 0x61, 0x2e, 0x46, 0x69, 0x6c, 0x65, 0x49, 0x6e, 0x66, 0x6f, 0x48, 0x00, 0x52,
+	0x04, 0x49, 0x6e, 0x66, 0x6f, 0x12, 0x16, 0x0a, 0x05, 0x43, 0x68, 0x75, 0x6e, 0x6b, 0x18, 0x02,
+	0x20, 0x01, 0x28, 0x0c, 0x48, 0x00, 0x52, 0x05, 0x43, 0x68, 0x75, 0x6e, 0x6b, 0x1a, 0x42, 0x0a,
+	0x08, 0x46, 0x69, 0x6c, 0x65, 0x49, 0x6e, 0x66, 0x6f, 0x12, 0x1a, 0x0a, 0x08, 0x46, 0x69, 0x6c,
+	0x65, 0x4e, 0x61, 0x6d, 0x65, 0x18, 0x01, 0x20, 0x01, 0x28, 0x09, 0x52, 0x08, 0x46, 0x69, 0x6c,
+	0x65, 0x4e, 0x61, 0x6d, 0x65, 0x12, 0x1a, 0x0a, 0x08, 0x4d, 0x65, 0x74, 0x61, 0x64, 0x61, 0x74,
+	0x61, 0x18, 0x02, 0x20, 0x01, 0x28, 0x09, 0x52, 0x08, 0x4d, 0x65, 0x74, 0x61, 0x64, 0x61, 0x74,
+	0x61, 0x42, 0x06, 0x0a, 0x04, 0x44, 0x61, 0x74, 0x61, 0x22, 0xa0, 0x01, 0x0a, 0x08, 0x42, 0x61,
 	0x6e, 0x6b, 0x44, 0x61, 0x74, 0x61, 0x12, 0x16, 0x0a, 0x06, 0x4e, 0x75, 0x6d, 0x62, 0x65, 0x72,
 	0x18, 0x01, 0x20, 0x01, 0x28, 0x09, 0x52, 0x06, 0x4e, 0x75, 0x6d, 0x62, 0x65, 0x72, 0x12, 0x26,
 	0x0a, 0x0e, 0x43, 0x61, 0x72, 0x64, 0x68, 0x6f, 0x6c, 0x64, 0x65, 0x72, 0x4e, 0x61, 0x6d, 0x65,
@@ -1774,7 +1861,7 @@ func file_server_proto_rawDescGZIP() []byte {
 	return file_server_proto_rawDescData
 }
 
-var file_server_proto_msgTypes = make([]protoimpl.MessageInfo, 30)
+var file_server_proto_msgTypes = make([]protoimpl.MessageInfo, 31)
 var file_server_proto_goTypes = []interface{}{
 	(*RegistrationRequest)(nil),     // 0: server.RegistrationRequest
 	(*RegistrationResponse)(nil),    // 1: server.RegistrationResponse
@@ -1806,68 +1893,70 @@ var file_server_proto_goTypes = []interface{}{
 	(*BankCardListResponse)(nil),    // 27: server.BankCardListResponse
 	(*BankCardRequest)(nil),         // 28: server.BankCardRequest
 	(*BankCardResponse)(nil),        // 29: server.BankCardResponse
-	(*empty.Empty)(nil),             // 30: google.protobuf.Empty
+	(*BinaryData_FileInfo)(nil),     // 30: server.BinaryData.FileInfo
+	(*empty.Empty)(nil),             // 31: google.protobuf.Empty
 }
 var file_server_proto_depIdxs = []int32{
-	4,  // 0: server.AddAuthDataRequest.Data:type_name -> server.AuthData
-	5,  // 1: server.AddTextDataRequest.Data:type_name -> server.TextData
-	6,  // 2: server.AddBinaryDataRequest.Data:type_name -> server.BinaryData
-	7,  // 3: server.AddBankDataRequest.Data:type_name -> server.BankData
-	4,  // 4: server.UpdateAuthDataRequest.Data:type_name -> server.AuthData
-	5,  // 5: server.UpdateTextDataRequest.Data:type_name -> server.TextData
-	6,  // 6: server.UpdateBinaryDataRequest.Data:type_name -> server.BinaryData
-	7,  // 7: server.UpdateBankDataRequest.Data:type_name -> server.BankData
-	4,  // 8: server.AuthDataListResponse.Data:type_name -> server.AuthData
-	5,  // 9: server.TextDataResponse.Data:type_name -> server.TextData
-	6,  // 10: server.BinaryDataResponse.Data:type_name -> server.BinaryData
-	7,  // 11: server.BankCardResponse.Data:type_name -> server.BankData
-	0,  // 12: server.Keeper.Registration:input_type -> server.RegistrationRequest
-	2,  // 13: server.Keeper.Authorization:input_type -> server.AuthorizationRequest
-	8,  // 14: server.Keeper.AddAuthData:input_type -> server.AddAuthDataRequest
-	9,  // 15: server.Keeper.AddTextData:input_type -> server.AddTextDataRequest
-	10, // 16: server.Keeper.AddBinaryData:input_type -> server.AddBinaryDataRequest
-	11, // 17: server.Keeper.AddBankData:input_type -> server.AddBankDataRequest
-	12, // 18: server.Keeper.UpdateAuthData:input_type -> server.UpdateAuthDataRequest
-	13, // 19: server.Keeper.UpdateTextData:input_type -> server.UpdateTextDataRequest
-	14, // 20: server.Keeper.UpdateBinaryData:input_type -> server.UpdateBinaryDataRequest
-	15, // 21: server.Keeper.UpdateBankData:input_type -> server.UpdateBankDataRequest
-	16, // 22: server.Keeper.DeleteAuthData:input_type -> server.DeleteAuthDataRequest
-	16, // 23: server.Keeper.DeleteTextData:input_type -> server.DeleteAuthDataRequest
-	16, // 24: server.Keeper.DeleteBinaryData:input_type -> server.DeleteAuthDataRequest
-	16, // 25: server.Keeper.DeleteBankData:input_type -> server.DeleteAuthDataRequest
-	30, // 26: server.Keeper.AuthDataList:input_type -> google.protobuf.Empty
-	30, // 27: server.Keeper.TextLabelsList:input_type -> google.protobuf.Empty
-	22, // 28: server.Keeper.TextData:input_type -> server.TextDataRequest
-	30, // 29: server.Keeper.FileNamesList:input_type -> google.protobuf.Empty
-	25, // 30: server.Keeper.BinaryData:input_type -> server.BinaryDataRequest
-	30, // 31: server.Keeper.BankCardNumbersList:input_type -> google.protobuf.Empty
-	28, // 32: server.Keeper.BankCard:input_type -> server.BankCardRequest
-	1,  // 33: server.Keeper.Registration:output_type -> server.RegistrationResponse
-	3,  // 34: server.Keeper.Authorization:output_type -> server.AuthorizationResponse
-	30, // 35: server.Keeper.AddAuthData:output_type -> google.protobuf.Empty
-	30, // 36: server.Keeper.AddTextData:output_type -> google.protobuf.Empty
-	30, // 37: server.Keeper.AddBinaryData:output_type -> google.protobuf.Empty
-	30, // 38: server.Keeper.AddBankData:output_type -> google.protobuf.Empty
-	30, // 39: server.Keeper.UpdateAuthData:output_type -> google.protobuf.Empty
-	30, // 40: server.Keeper.UpdateTextData:output_type -> google.protobuf.Empty
-	30, // 41: server.Keeper.UpdateBinaryData:output_type -> google.protobuf.Empty
-	30, // 42: server.Keeper.UpdateBankData:output_type -> google.protobuf.Empty
-	30, // 43: server.Keeper.DeleteAuthData:output_type -> google.protobuf.Empty
-	30, // 44: server.Keeper.DeleteTextData:output_type -> google.protobuf.Empty
-	30, // 45: server.Keeper.DeleteBinaryData:output_type -> google.protobuf.Empty
-	30, // 46: server.Keeper.DeleteBankData:output_type -> google.protobuf.Empty
-	20, // 47: server.Keeper.AuthDataList:output_type -> server.AuthDataListResponse
-	21, // 48: server.Keeper.TextLabelsList:output_type -> server.TextLabelsListResponse
-	23, // 49: server.Keeper.TextData:output_type -> server.TextDataResponse
-	24, // 50: server.Keeper.FileNamesList:output_type -> server.FileNamesListResponse
-	26, // 51: server.Keeper.BinaryData:output_type -> server.BinaryDataResponse
-	27, // 52: server.Keeper.BankCardNumbersList:output_type -> server.BankCardListResponse
-	29, // 53: server.Keeper.BankCard:output_type -> server.BankCardResponse
-	33, // [33:54] is the sub-list for method output_type
-	12, // [12:33] is the sub-list for method input_type
-	12, // [12:12] is the sub-list for extension type_name
-	12, // [12:12] is the sub-list for extension extendee
-	0,  // [0:12] is the sub-list for field type_name
+	30, // 0: server.BinaryData.Info:type_name -> server.BinaryData.FileInfo
+	4,  // 1: server.AddAuthDataRequest.Data:type_name -> server.AuthData
+	5,  // 2: server.AddTextDataRequest.Data:type_name -> server.TextData
+	6,  // 3: server.AddBinaryDataRequest.Data:type_name -> server.BinaryData
+	7,  // 4: server.AddBankDataRequest.Data:type_name -> server.BankData
+	4,  // 5: server.UpdateAuthDataRequest.Data:type_name -> server.AuthData
+	5,  // 6: server.UpdateTextDataRequest.Data:type_name -> server.TextData
+	6,  // 7: server.UpdateBinaryDataRequest.Data:type_name -> server.BinaryData
+	7,  // 8: server.UpdateBankDataRequest.Data:type_name -> server.BankData
+	4,  // 9: server.AuthDataListResponse.Data:type_name -> server.AuthData
+	5,  // 10: server.TextDataResponse.Data:type_name -> server.TextData
+	6,  // 11: server.BinaryDataResponse.Data:type_name -> server.BinaryData
+	7,  // 12: server.BankCardResponse.Data:type_name -> server.BankData
+	0,  // 13: server.Keeper.Registration:input_type -> server.RegistrationRequest
+	2,  // 14: server.Keeper.Authorization:input_type -> server.AuthorizationRequest
+	8,  // 15: server.Keeper.AddAuthData:input_type -> server.AddAuthDataRequest
+	9,  // 16: server.Keeper.AddTextData:input_type -> server.AddTextDataRequest
+	10, // 17: server.Keeper.AddBinaryData:input_type -> server.AddBinaryDataRequest
+	11, // 18: server.Keeper.AddBankData:input_type -> server.AddBankDataRequest
+	12, // 19: server.Keeper.UpdateAuthData:input_type -> server.UpdateAuthDataRequest
+	13, // 20: server.Keeper.UpdateTextData:input_type -> server.UpdateTextDataRequest
+	14, // 21: server.Keeper.UpdateBinaryData:input_type -> server.UpdateBinaryDataRequest
+	15, // 22: server.Keeper.UpdateBankData:input_type -> server.UpdateBankDataRequest
+	16, // 23: server.Keeper.DeleteAuthData:input_type -> server.DeleteAuthDataRequest
+	16, // 24: server.Keeper.DeleteTextData:input_type -> server.DeleteAuthDataRequest
+	16, // 25: server.Keeper.DeleteBinaryData:input_type -> server.DeleteAuthDataRequest
+	16, // 26: server.Keeper.DeleteBankData:input_type -> server.DeleteAuthDataRequest
+	31, // 27: server.Keeper.AuthDataList:input_type -> google.protobuf.Empty
+	31, // 28: server.Keeper.TextLabelsList:input_type -> google.protobuf.Empty
+	22, // 29: server.Keeper.TextData:input_type -> server.TextDataRequest
+	31, // 30: server.Keeper.FileNamesList:input_type -> google.protobuf.Empty
+	25, // 31: server.Keeper.BinaryData:input_type -> server.BinaryDataRequest
+	31, // 32: server.Keeper.BankCardNumbersList:input_type -> google.protobuf.Empty
+	28, // 33: server.Keeper.BankCard:input_type -> server.BankCardRequest
+	1,  // 34: server.Keeper.Registration:output_type -> server.RegistrationResponse
+	3,  // 35: server.Keeper.Authorization:output_type -> server.AuthorizationResponse
+	31, // 36: server.Keeper.AddAuthData:output_type -> google.protobuf.Empty
+	31, // 37: server.Keeper.AddTextData:output_type -> google.protobuf.Empty
+	31, // 38: server.Keeper.AddBinaryData:output_type -> google.protobuf.Empty
+	31, // 39: server.Keeper.AddBankData:output_type -> google.protobuf.Empty
+	31, // 40: server.Keeper.UpdateAuthData:output_type -> google.protobuf.Empty
+	31, // 41: server.Keeper.UpdateTextData:output_type -> google.protobuf.Empty
+	31, // 42: server.Keeper.UpdateBinaryData:output_type -> google.protobuf.Empty
+	31, // 43: server.Keeper.UpdateBankData:output_type -> google.protobuf.Empty
+	31, // 44: server.Keeper.DeleteAuthData:output_type -> google.protobuf.Empty
+	31, // 45: server.Keeper.DeleteTextData:output_type -> google.protobuf.Empty
+	31, // 46: server.Keeper.DeleteBinaryData:output_type -> google.protobuf.Empty
+	31, // 47: server.Keeper.DeleteBankData:output_type -> google.protobuf.Empty
+	20, // 48: server.Keeper.AuthDataList:output_type -> server.AuthDataListResponse
+	21, // 49: server.Keeper.TextLabelsList:output_type -> server.TextLabelsListResponse
+	23, // 50: server.Keeper.TextData:output_type -> server.TextDataResponse
+	24, // 51: server.Keeper.FileNamesList:output_type -> server.FileNamesListResponse
+	26, // 52: server.Keeper.BinaryData:output_type -> server.BinaryDataResponse
+	27, // 53: server.Keeper.BankCardNumbersList:output_type -> server.BankCardListResponse
+	29, // 54: server.Keeper.BankCard:output_type -> server.BankCardResponse
+	34, // [34:55] is the sub-list for method output_type
+	13, // [13:34] is the sub-list for method input_type
+	13, // [13:13] is the sub-list for extension type_name
+	13, // [13:13] is the sub-list for extension extendee
+	0,  // [0:13] is the sub-list for field type_name
 }
 
 func init() { file_server_proto_init() }
@@ -2236,6 +2325,22 @@ func file_server_proto_init() {
 				return nil
 			}
 		}
+		file_server_proto_msgTypes[30].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*BinaryData_FileInfo); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+	}
+	file_server_proto_msgTypes[6].OneofWrappers = []interface{}{
+		(*BinaryData_Info)(nil),
+		(*BinaryData_Chunk)(nil),
 	}
 	type x struct{}
 	out := protoimpl.TypeBuilder{
@@ -2243,7 +2348,7 @@ func file_server_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: file_server_proto_rawDesc,
 			NumEnums:      0,
-			NumMessages:   30,
+			NumMessages:   31,
 			NumExtensions: 0,
 			NumServices:   1,
 		},

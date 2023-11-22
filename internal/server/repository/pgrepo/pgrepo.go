@@ -29,3 +29,98 @@ func (repo *PgRepo) CreateUser(ctx context.Context, user entities.User) (int64, 
 func (repo *PgRepo) User(ctx context.Context, user *entities.User) error {
 	return nil
 }
+
+// AddAuthData выполняет сохранение пары логин/пароль в репозитории.
+func (repo *PgRepo) AddAuthData(ctx context.Context, data entities.AuthData) error {
+	return nil
+}
+
+// AddTextData выполняет сохранение текстовых данных в репозитории.
+func (repo *PgRepo) AddTextData(ctx context.Context, data entities.TextData) error {
+	return nil
+}
+
+// AddBinaryData выполняет сохранение бинарных данных в репозитории.
+func (repo *PgRepo) AddBinaryData(ctx context.Context, data entities.File) error {
+	return nil
+}
+
+// AddBankData выполняет сохранение данных банковских карт в репозитории.
+func (repo *PgRepo) AddBankData(ctx context.Context, data entities.BankData) error {
+	return nil
+}
+
+// UpdateAuthData выполняет обновление пары логин/пароль в репозитории.
+func (repo *PgRepo) UpdateAuthData(ctx context.Context, data entities.AuthData) error {
+	return nil
+}
+
+// UpdateTextData выполняет обновление текстовых данных в репозитории.
+func (repo *PgRepo) UpdateTextData(ctx context.Context, data entities.TextData) error {
+	return nil
+}
+
+// UpdateBinaryData выполняет обновление бинарных данных в репозитории.
+func (repo *PgRepo) UpdateBinaryData(ctx context.Context, data entities.File) error {
+	return nil
+}
+
+// UpdateBankData выполняет обновление данных банковских карт в репозитории.
+func (repo *PgRepo) UpdateBankData(ctx context.Context, data entities.BankData) error {
+	return nil
+}
+
+// DeleteAuthData выполняет удаление пары логин/пароль из репозитория.
+func (repo *PgRepo) DeleteAuthData(ctx context.Context, data entities.AuthData) error {
+	return nil
+}
+
+// DeleteTextData выполняет удаление текстовых данных из репозитория.
+func (repo *PgRepo) DeleteTextData(ctx context.Context, data entities.TextData) error {
+	return nil
+}
+
+// DeleteBinaryData выполняет удаление бинарных данных из репозитория.
+func (repo *PgRepo) DeleteBinaryData(ctx context.Context, data entities.File) error {
+	return nil
+}
+
+// DeleteBankData выполняет удаление данных банковских карт из репозитория.
+func (repo *PgRepo) DeleteBankData(ctx context.Context, data entities.BankData) error {
+	return nil
+}
+
+// AuthDataList возвращает список сохраненных пар логин/пароль из репозитория.
+func (repo *PgRepo) AuthDataList(ctx context.Context, userID int64) ([]entities.AuthData, error) {
+	return nil, nil
+}
+
+// TextLabelsList возвращает список заголовков сохранённых текстовых данных из репозитория.
+func (repo *PgRepo) TextLabelsList(ctx context.Context, userID int64) ([]string, error) {
+	return nil, nil
+}
+
+// TextData возвращает сохранённые текстовые данные по заголовку из репозитория.
+func (repo *PgRepo) TextData(ctx context.Context, data *entities.TextData) error {
+	return nil
+}
+
+// FileNamesList возвращает список сохранённых файлов из репозитория.
+func (repo *PgRepo) FileNamesList(ctx context.Context, userID int64) ([]string, error) {
+	return nil, nil
+}
+
+// BinaryData возвращает сохранённые бинарные данные по имени файла из репозитория.
+func (repo *PgRepo) BinaryData(ctx context.Context, data *entities.File) error {
+	return nil
+}
+
+// BankCardList возвращает список номеров банковских карт из репозитория.
+func (repo *PgRepo) BankCardNumbersList(ctx context.Context, userID int64) ([]string, error) {
+	return nil, nil
+}
+
+// BankCardList возвращает данные банковской карты по номеру из репозитория.
+func (repo *PgRepo) BankCard(ctx context.Context, data *entities.BankData) error {
+	return nil
+}

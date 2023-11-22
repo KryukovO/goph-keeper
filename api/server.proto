@@ -89,8 +89,14 @@ message TextData {
 }
 
 message BinaryData {
-    string FileName = 1; // Имя файла
-    bytes FileData = 2; // Данные
+    message FileInfo {
+        string FileName = 1; // Имя файла
+        string Metadata = 2; // Метаданные
+    }
+    oneof Data {
+        FileInfo Info = 1; // Информация о файле
+        bytes Chunk  = 2; // Фрагмент данных
+    }
 }
 
 message BankData {
