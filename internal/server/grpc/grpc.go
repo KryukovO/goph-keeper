@@ -17,15 +17,29 @@ import (
 type KeeperServer struct {
 	api.UnimplementedKeeperServer
 
-	uc  usecases.UseCases
+	userUC   usecases.User
+	authUC   usecases.AuthData
+	textUC   usecases.TextData
+	bankUC   usecases.BankData
+	binaryUC usecases.BinaryData
+
 	log *logrus.Logger
 }
 
 // NewKeeperServer возвращает новый объект KeeperServer.
-func NewKeeperServer(uc usecases.UseCases, log *logrus.Logger) (*KeeperServer, error) {
+func NewKeeperServer(
+	userUC usecases.User, authUC usecases.AuthData,
+	textUC usecases.TextData, bankUC usecases.BankData,
+	binaryUC usecases.BinaryData,
+	log *logrus.Logger,
+) (*KeeperServer, error) {
 	return &KeeperServer{
-		uc:  uc,
-		log: log,
+		userUC:   userUC,
+		authUC:   authUC,
+		textUC:   textUC,
+		bankUC:   bankUC,
+		binaryUC: binaryUC,
+		log:      log,
 	}, nil
 }
 
@@ -55,7 +69,7 @@ func (s KeeperServer) AddTextData(ctx context.Context, req *api.AddTextDataReque
 	return nil, status.Errorf(codes.Unimplemented, "method AddTextData not implemented")
 }
 
-// AddBinaryData выполняет сохранение бинарных данных в репозиторий.
+// AddBinaryData выполняет сохранение бинарных данных в хранилище.
 func (s KeeperServer) AddBinaryData(stream api.Keeper_AddBinaryDataServer) error {
 	return status.Errorf(codes.Unimplemented, "method AddBinaryData not implemented")
 }
@@ -75,11 +89,6 @@ func (s KeeperServer) UpdateTextData(ctx context.Context, req *api.UpdateTextDat
 	return nil, status.Errorf(codes.Unimplemented, "method UpdateTextData not implemented")
 }
 
-// UpdateBinaryData выполняет обновление бинарных данных в репозитории.
-func (s KeeperServer) UpdateBinaryData(stream api.Keeper_UpdateBinaryDataServer) error {
-	return status.Errorf(codes.Unimplemented, "method UpdateBinaryData not implemented")
-}
-
 // UpdateBankData выполняет обновление данных банковских карт в репозитории.
 func (s KeeperServer) UpdateBankData(ctx context.Context, req *api.UpdateBankDataRequest) (*empty.Empty, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method UpdateBankData not implemented")
@@ -95,7 +104,7 @@ func (s KeeperServer) DeleteTextData(ctx context.Context, req *api.DeleteAuthDat
 	return nil, status.Errorf(codes.Unimplemented, "method DeleteTextData not implemented")
 }
 
-// DeleteBinaryData выполняет удаление бинарных данных из репозитория.
+// DeleteBinaryData выполняет удаление бинарных данных из хранилища.
 func (s KeeperServer) DeleteBinaryData(ctx context.Context, req *api.DeleteAuthDataRequest) (*empty.Empty, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method DeleteBinaryData not implemented")
 }

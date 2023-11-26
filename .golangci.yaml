@@ -38,6 +38,10 @@ linters-settings:
   gocognit:
     min-complexity: 35
 
+  gomnd:
+    ignored-numbers:
+      - 1024
+
   gosec:
     excludes:
       - G108

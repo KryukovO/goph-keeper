@@ -18,7 +18,7 @@ service Keeper {
     rpc AddAuthData(AddAuthDataRequest) returns (google.protobuf.Empty);
     // AddTextData выполняет сохранение текстовых данных в репозиторий.
     rpc AddTextData(AddTextDataRequest) returns (google.protobuf.Empty);
-    // AddBinaryData выполняет сохранение бинарных данных в репозиторий.
+    // AddBinaryData выполняет сохранение бинарных данных в хранилище.
     rpc AddBinaryData(stream AddBinaryDataRequest) returns (google.protobuf.Empty);
     // AddBankData выполняет сохранение данных банковских карт в репозиторий.
     rpc AddBankData(AddBankDataRequest) returns (google.protobuf.Empty);
@@ -27,8 +27,6 @@ service Keeper {
     rpc UpdateAuthData(UpdateAuthDataRequest) returns (google.protobuf.Empty);
     // UpdateTextData выполняет обновление текстовых данных в репозитории.
     rpc UpdateTextData(UpdateTextDataRequest) returns (google.protobuf.Empty);
-    // UpdateBinaryData выполняет обновление бинарных данных в репозитории.
-    rpc UpdateBinaryData(stream UpdateBinaryDataRequest) returns (google.protobuf.Empty);
     // UpdateBankData выполняет обновление данных банковских карт в репозитории.
     rpc UpdateBankData(UpdateBankDataRequest) returns (google.protobuf.Empty);
     
@@ -36,7 +34,7 @@ service Keeper {
     rpc DeleteAuthData(DeleteAuthDataRequest) returns (google.protobuf.Empty);
     // DeleteTextData выполняет удаление текстовых данных из репозитория.
     rpc DeleteTextData(DeleteAuthDataRequest) returns (google.protobuf.Empty);
-    // DeleteBinaryData выполняет удаление бинарных данных из репозитория.
+    // DeleteBinaryData выполняет удаление бинарных данных из хранилища.
     rpc DeleteBinaryData(DeleteAuthDataRequest) returns (google.protobuf.Empty);
     // DeleteBankData выполняет удаление данных банковских карт из репозитория.
     rpc DeleteBankData(DeleteAuthDataRequest) returns (google.protobuf.Empty);
@@ -57,9 +55,16 @@ service Keeper {
     rpc BankCard(BankCardRequest) returns (BankCardResponse);
 }
 
+enum Subscription {
+    UNKNOWN = 0;
+    REGULAR = 1;
+    PREMIUM = 2;
+}
+
 message RegistrationRequest {
     string Login = 1; // Логин
     string Password = 2; // Пароль
+    Subscription Subscription = 3; // Тип подписки
 }
 
 message RegistrationResponse {
@@ -89,12 +94,8 @@ message TextData {
 }
 
 message BinaryData {
-    message FileInfo {
-        string FileName = 1; // Имя файла
-        string Metadata = 2; // Метаданные
-    }
     oneof Data {
-        FileInfo Info = 1; // Информация о файле
+        string FileName = 1; // Имя файла
         bytes Chunk  = 2; // Фрагмент данных
     }
 }
@@ -129,10 +130,6 @@ message UpdateAuthDataRequest {
 
 message UpdateTextDataRequest {
     TextData Data = 1; // Данные для сохранения
-}
-
-message UpdateBinaryDataRequest {
-    BinaryData Data = 1; // Данные для сохранения
 }
 
 message UpdateBankDataRequest {

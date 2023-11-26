@@ -9,6 +9,7 @@ import (
 
 	api "github.com/KryukovO/goph-keeper/api/serverpb"
 	"github.com/KryukovO/goph-keeper/internal/server/config"
+	localstorage "github.com/KryukovO/goph-keeper/internal/server/filestorage/local-storage"
 	sgrpc "github.com/KryukovO/goph-keeper/internal/server/grpc"
 	"github.com/KryukovO/goph-keeper/internal/server/repository/pgrepo"
 	"github.com/KryukovO/goph-keeper/internal/server/usecases"
@@ -57,8 +58,32 @@ func (a *App) Run(ctx context.Context) error {
 		a.log.Info("Database connection closed")
 	}()
 
+	a.log.Info("Initializing file storage...")
+
+	fs, err := localstorage.NewLocalStorage(a.cfg.FSFolder)
+	if err != nil {
+		return err
+	}
+
+	a.log.Info("File storage is initialized")
+
+	defer func() {
+		fs.Close()
+
+		a.log.Info("File storage closed")
+	}()
+
 	repo := pgrepo.NewPgRepo(db)
-	keeper := usecases.NewKeeperUseCases(repo, a.cfg.RepositoryTimeout)
+
+	user := usecases.NewUserUseCase(repo, a.cfg.RepositoryTimeout)
+	auth := usecases.NewAuthDataUseCase(repo, a.cfg.RepositoryTimeout)
+	txt := usecases.NewTextDataUseCase(repo, a.cfg.RepositoryTimeout)
+	bank := usecases.NewBankDataUseCase(repo, a.cfg.RepositoryTimeout)
+
+	binary, err := usecases.NewBinaryDataUseCase(repo, fs, a.cfg.RepositoryTimeout)
+	if err != nil {
+		return err
+	}
 
 	itcManager := sgrpc.NewManager([]byte(a.cfg.SecretKey), a.log)
 	a.grpcServer = grpc.NewServer(
@@ -68,7 +93,10 @@ func (a *App) Run(ctx context.Context) error {
 		),
 	)
 
-	keeperServer, err := sgrpc.NewKeeperServer(keeper, a.log)
+	keeperServer, err := sgrpc.NewKeeperServer(
+		user, auth, txt, bank, binary,
+		a.log,
+	)
 	if err != nil {
 		return err
 	}

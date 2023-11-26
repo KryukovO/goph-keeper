@@ -1,50 +1,48 @@
 -- +goose Up
 -- +goose StatementBegin
+    CREATE TYPE "subscription" AS ENUM ('UNKNOWN', 'REGULAR', 'PREMIUM');
+
     CREATE TABLE IF NOT EXISTS "users" (
         "id" BIGINT GENERATED ALWAYS AS IDENTITY,
-        "login" TEXT NOT NULL UNIQUE,
+        "login" TEXT NOT NULL,
         "password" TEXT NOT NULL,
         "salt" TEXT NOT NULL,
-        PRIMARY KEY(id)
+        "subscr" "subscription" NOT NULL,
+        PRIMARY KEY(id),
+        CONSTRAINT "users_uniq" UNIQUE("login")
     );
 
     CREATE TABLE IF NOT EXISTS "auth_data" (
         "id" BIGINT GENERATED ALWAYS AS IDENTITY,
-        "user_id" BIGINT,
-        "resource" TEXT,
-        "login" TEXT,
-        "password" TEXT,
+        "user_id" BIGINT NOT NULL,
+        "resource" TEXT NOT NULL,
+        "login" TEXT NOT NULL,
+        "password" TEXT NOT NULL,
         "metadata" TEXT,
-        CONSTRAINT "auth_data_uniq" PRIMARY KEY("user_id", "resource", "login")
+        PRIMARY KEY(id),
+        CONSTRAINT "auth_data_uniq" UNIQUE("user_id", "resource", "login")
     );
     
     CREATE TABLE IF NOT EXISTS "text_data" (
         "id" BIGINT GENERATED ALWAYS AS IDENTITY,
-        "user_id" BIGINT,
-        "label" TEXT,
-        "data" TEXT,
+        "user_id" BIGINT NOT NULL,
+        "label" TEXT NOT NULL,
+        "data" TEXT NOT NULL,
         "metadata" TEXT,
-        CONSTRAINT "text_data_uniq" PRIMARY KEY("user_id", "label")
+        PRIMARY KEY(id),
+        CONSTRAINT "text_data_uniq" UNIQUE("user_id", "label")
     );
     
     CREATE TABLE IF NOT EXISTS "bank_data" (
         "id" BIGINT GENERATED ALWAYS AS IDENTITY,
-        "user_id" BIGINT,
-        "number" TEXT,
-        "name" TEXT,
-        "expired_at" TEXT,
-        "cvv" TEXT,
+        "user_id" BIGINT NOT NULL,
+        "number" TEXT NOT NULL,
+        "name" TEXT NOT NULL,
+        "expired_at" TEXT NOT NULL,
+        "cvv" TEXT NOT NULL,
         "metadata" TEXT,
-        CONSTRAINT "bank_data_uniq" PRIMARY KEY("user_id", "number")
-    );
-
-    CREATE TABLE IF NOT EXISTS "file_data" (
-        "id" BIGINT GENERATED ALWAYS AS IDENTITY,
-        "user_id" BIGINT,
-        "filename" TEXT,
-        "data" BYTEA,
-        "metadata" TEXT,
-        CONSTRAINT "file_data_uniq" PRIMARY KEY("user_id", "filename")
+        PRIMARY KEY(id),
+        CONSTRAINT "bank_data_uniq" UNIQUE("user_id", "number")
     );
 -- +goose StatementEnd
 
@@ -54,5 +52,5 @@
     DROP TABLE IF EXISTS "auth_data";
     DROP TABLE IF EXISTS "text_data";
     DROP TABLE IF EXISTS "bank_data";
-    DROP TABLE IF EXISTS "file_data";
+    DROP TYPE "subscription";
 -- +goose StatementEnd

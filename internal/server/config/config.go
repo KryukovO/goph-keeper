@@ -10,9 +10,9 @@ import (
 const (
 	address           = ":8080"
 	dsn               = ""
+	fsFolder          = "./files"
 	secretKey         = ""
 	userTokenTTL      = 30 * time.Minute
-	shutdownTimeout   = 10 * time.Second
 	repositoryTimeout = 3 * time.Second
 )
 
@@ -22,6 +22,8 @@ type Config struct {
 	Address string
 	// DSN - адрес подключения к БД.
 	DSN string
+	// FSFolder - директория хранения файлов пользователей.
+	FSFolder string
 	// RepositoryTimeout - таймаут выполнения операций с репозиторием.
 	RepositoryTimeout time.Duration
 	// SecretKey - ключ шифрования токена аутентификации.
@@ -38,22 +40,24 @@ func NewConfig() *Config {
 
 	vpr.BindEnv("server_address")
 	vpr.BindEnv("database_uri")
+	vpr.BindEnv("filestorage_folder")
 	vpr.BindEnv("jwt_secret")
 	vpr.BindEnv("jwt_ttl")
-	vpr.BindEnv("server_shutdown")
 	vpr.BindEnv("repository_timeout")
 
 	vpr.SetDefault("server_address", address)
 	vpr.SetDefault("database_uri", dsn)
+	vpr.BindEnv("filestorage_folder", fsFolder)
 	vpr.SetDefault("jwt_secret", secretKey)
 	vpr.SetDefault("jwt_ttl", userTokenTTL)
-	vpr.SetDefault("server_shutdown", shutdownTimeout)
 	vpr.SetDefault("repository_timeout", repositoryTimeout)
 
 	return &Config{
-		Address:      vpr.GetString("server_address"),
-		DSN:          vpr.GetString("database_uri"),
-		SecretKey:    vpr.GetString("jwt_secret"),
-		UserTokenTTL: vpr.GetDuration("jwt_ttl"),
+		Address:           vpr.GetString("server_address"),
+		DSN:               vpr.GetString("database_uri"),
+		FSFolder:          vpr.GetString("filestorage_folder"),
+		SecretKey:         vpr.GetString("jwt_secret"),
+		UserTokenTTL:      vpr.GetDuration("jwt_ttl"),
+		RepositoryTimeout: vpr.GetDuration("repository_timeout"),
 	}
 }

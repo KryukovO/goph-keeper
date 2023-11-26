@@ -28,7 +28,6 @@ const (
 	Keeper_AddBankData_FullMethodName         = "/server.Keeper/AddBankData"
 	Keeper_UpdateAuthData_FullMethodName      = "/server.Keeper/UpdateAuthData"
 	Keeper_UpdateTextData_FullMethodName      = "/server.Keeper/UpdateTextData"
-	Keeper_UpdateBinaryData_FullMethodName    = "/server.Keeper/UpdateBinaryData"
 	Keeper_UpdateBankData_FullMethodName      = "/server.Keeper/UpdateBankData"
 	Keeper_DeleteAuthData_FullMethodName      = "/server.Keeper/DeleteAuthData"
 	Keeper_DeleteTextData_FullMethodName      = "/server.Keeper/DeleteTextData"
@@ -57,7 +56,7 @@ type KeeperClient interface {
 	AddAuthData(ctx context.Context, in *AddAuthDataRequest, opts ...grpc.CallOption) (*empty.Empty, error)
 	// AddTextData выполняет сохранение текстовых данных в репозиторий.
 	AddTextData(ctx context.Context, in *AddTextDataRequest, opts ...grpc.CallOption) (*empty.Empty, error)
-	// AddBinaryData выполняет сохранение бинарных данных в репозиторий.
+	// AddBinaryData выполняет сохранение бинарных данных в хранилище.
 	AddBinaryData(ctx context.Context, opts ...grpc.CallOption) (Keeper_AddBinaryDataClient, error)
 	// AddBankData выполняет сохранение данных банковских карт в репозиторий.
 	AddBankData(ctx context.Context, in *AddBankDataRequest, opts ...grpc.CallOption) (*empty.Empty, error)
@@ -65,15 +64,13 @@ type KeeperClient interface {
 	UpdateAuthData(ctx context.Context, in *UpdateAuthDataRequest, opts ...grpc.CallOption) (*empty.Empty, error)
 	// UpdateTextData выполняет обновление текстовых данных в репозитории.
 	UpdateTextData(ctx context.Context, in *UpdateTextDataRequest, opts ...grpc.CallOption) (*empty.Empty, error)
-	// UpdateBinaryData выполняет обновление бинарных данных в репозитории.
-	UpdateBinaryData(ctx context.Context, opts ...grpc.CallOption) (Keeper_UpdateBinaryDataClient, error)
 	// UpdateBankData выполняет обновление данных банковских карт в репозитории.
 	UpdateBankData(ctx context.Context, in *UpdateBankDataRequest, opts ...grpc.CallOption) (*empty.Empty, error)
 	// DeleteAuthData выполняет удаление пары логин/пароль из репозитория.
 	DeleteAuthData(ctx context.Context, in *DeleteAuthDataRequest, opts ...grpc.CallOption) (*empty.Empty, error)
 	// DeleteTextData выполняет удаление текстовых данных из репозитория.
 	DeleteTextData(ctx context.Context, in *DeleteAuthDataRequest, opts ...grpc.CallOption) (*empty.Empty, error)
-	// DeleteBinaryData выполняет удаление бинарных данных из репозитория.
+	// DeleteBinaryData выполняет удаление бинарных данных из хранилища.
 	DeleteBinaryData(ctx context.Context, in *DeleteAuthDataRequest, opts ...grpc.CallOption) (*empty.Empty, error)
 	// DeleteBankData выполняет удаление данных банковских карт из репозитория.
 	DeleteBankData(ctx context.Context, in *DeleteAuthDataRequest, opts ...grpc.CallOption) (*empty.Empty, error)
@@ -198,40 +195,6 @@ func (c *keeperClient) UpdateTextData(ctx context.Context, in *UpdateTextDataReq
 	return out, nil
 }
 
-func (c *keeperClient) UpdateBinaryData(ctx context.Context, opts ...grpc.CallOption) (Keeper_UpdateBinaryDataClient, error) {
-	stream, err := c.cc.NewStream(ctx, &Keeper_ServiceDesc.Streams[1], Keeper_UpdateBinaryData_FullMethodName, opts...)
-	if err != nil {
-		return nil, err
-	}
-	x := &keeperUpdateBinaryDataClient{stream}
-	return x, nil
-}
-
-type Keeper_UpdateBinaryDataClient interface {
-	Send(*UpdateBinaryDataRequest) error
-	CloseAndRecv() (*empty.Empty, error)
-	grpc.ClientStream
-}
-
-type keeperUpdateBinaryDataClient struct {
-	grpc.ClientStream
-}
-
-func (x *keeperUpdateBinaryDataClient) Send(m *UpdateBinaryDataRequest) error {
-	return x.ClientStream.SendMsg(m)
-}
-
-func (x *keeperUpdateBinaryDataClient) CloseAndRecv() (*empty.Empty, error) {
-	if err := x.ClientStream.CloseSend(); err != nil {
-		return nil, err
-	}
-	m := new(empty.Empty)
-	if err := x.ClientStream.RecvMsg(m); err != nil {
-		return nil, err
-	}
-	return m, nil
-}
-
 func (c *keeperClient) UpdateBankData(ctx context.Context, in *UpdateBankDataRequest, opts ...grpc.CallOption) (*empty.Empty, error) {
 	out := new(empty.Empty)
 	err := c.cc.Invoke(ctx, Keeper_UpdateBankData_FullMethodName, in, out, opts...)
@@ -314,7 +277,7 @@ func (c *keeperClient) FileNamesList(ctx context.Context, in *empty.Empty, opts 
 }
 
 func (c *keeperClient) BinaryData(ctx context.Context, in *BinaryDataRequest, opts ...grpc.CallOption) (Keeper_BinaryDataClient, error) {
-	stream, err := c.cc.NewStream(ctx, &Keeper_ServiceDesc.Streams[2], Keeper_BinaryData_FullMethodName, opts...)
+	stream, err := c.cc.NewStream(ctx, &Keeper_ServiceDesc.Streams[1], Keeper_BinaryData_FullMethodName, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -377,7 +340,7 @@ type KeeperServer interface {
 	AddAuthData(context.Context, *AddAuthDataRequest) (*empty.Empty, error)
 	// AddTextData выполняет сохранение текстовых данных в репозиторий.
 	AddTextData(context.Context, *AddTextDataRequest) (*empty.Empty, error)
-	// AddBinaryData выполняет сохранение бинарных данных в репозиторий.
+	// AddBinaryData выполняет сохранение бинарных данных в хранилище.
 	AddBinaryData(Keeper_AddBinaryDataServer) error
 	// AddBankData выполняет сохранение данных банковских карт в репозиторий.
 	AddBankData(context.Context, *AddBankDataRequest) (*empty.Empty, error)
@@ -385,15 +348,13 @@ type KeeperServer interface {
 	UpdateAuthData(context.Context, *UpdateAuthDataRequest) (*empty.Empty, error)
 	// UpdateTextData выполняет обновление текстовых данных в репозитории.
 	UpdateTextData(context.Context, *UpdateTextDataRequest) (*empty.Empty, error)
-	// UpdateBinaryData выполняет обновление бинарных данных в репозитории.
-	UpdateBinaryData(Keeper_UpdateBinaryDataServer) error
 	// UpdateBankData выполняет обновление данных банковских карт в репозитории.
 	UpdateBankData(context.Context, *UpdateBankDataRequest) (*empty.Empty, error)
 	// DeleteAuthData выполняет удаление пары логин/пароль из репозитория.
 	DeleteAuthData(context.Context, *DeleteAuthDataRequest) (*empty.Empty, error)
 	// DeleteTextData выполняет удаление текстовых данных из репозитория.
 	DeleteTextData(context.Context, *DeleteAuthDataRequest) (*empty.Empty, error)
-	// DeleteBinaryData выполняет удаление бинарных данных из репозитория.
+	// DeleteBinaryData выполняет удаление бинарных данных из хранилища.
 	DeleteBinaryData(context.Context, *DeleteAuthDataRequest) (*empty.Empty, error)
 	// DeleteBankData выполняет удаление данных банковских карт из репозитория.
 	DeleteBankData(context.Context, *DeleteAuthDataRequest) (*empty.Empty, error)
@@ -441,9 +402,6 @@ func (UnimplementedKeeperServer) UpdateAuthData(context.Context, *UpdateAuthData
 }
 func (UnimplementedKeeperServer) UpdateTextData(context.Context, *UpdateTextDataRequest) (*empty.Empty, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method UpdateTextData not implemented")
-}
-func (UnimplementedKeeperServer) UpdateBinaryData(Keeper_UpdateBinaryDataServer) error {
-	return status.Errorf(codes.Unimplemented, "method UpdateBinaryData not implemented")
 }
 func (UnimplementedKeeperServer) UpdateBankData(context.Context, *UpdateBankDataRequest) (*empty.Empty, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method UpdateBankData not implemented")
@@ -644,32 +602,6 @@ func _Keeper_UpdateTextData_Handler(srv interface{}, ctx context.Context, dec fu
 		return srv.(KeeperServer).UpdateTextData(ctx, req.(*UpdateTextDataRequest))
 	}
 	return interceptor(ctx, in, info, handler)
-}
-
-func _Keeper_UpdateBinaryData_Handler(srv interface{}, stream grpc.ServerStream) error {
-	return srv.(KeeperServer).UpdateBinaryData(&keeperUpdateBinaryDataServer{stream})
-}
-
-type Keeper_UpdateBinaryDataServer interface {
-	SendAndClose(*empty.Empty) error
-	Recv() (*UpdateBinaryDataRequest, error)
-	grpc.ServerStream
-}
-
-type keeperUpdateBinaryDataServer struct {
-	grpc.ServerStream
-}
-
-func (x *keeperUpdateBinaryDataServer) SendAndClose(m *empty.Empty) error {
-	return x.ServerStream.SendMsg(m)
-}
-
-func (x *keeperUpdateBinaryDataServer) Recv() (*UpdateBinaryDataRequest, error) {
-	m := new(UpdateBinaryDataRequest)
-	if err := x.ServerStream.RecvMsg(m); err != nil {
-		return nil, err
-	}
-	return m, nil
 }
 
 func _Keeper_UpdateBankData_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
@@ -975,11 +907,6 @@ var Keeper_ServiceDesc = grpc.ServiceDesc{
 		{
 			StreamName:    "AddBinaryData",
 			Handler:       _Keeper_AddBinaryData_Handler,
-			ClientStreams: true,
-		},
-		{
-			StreamName:    "UpdateBinaryData",
-			Handler:       _Keeper_UpdateBinaryData_Handler,
 			ClientStreams: true,
 		},
 		{

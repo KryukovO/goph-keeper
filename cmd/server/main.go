@@ -33,6 +33,7 @@ func main() {
 
 	pflag.StringVarP(&cfg.Address, "address", "a", cfg.Address, "Address to run HTTP server")
 	pflag.StringVarP(&cfg.DSN, "dsn", "d", cfg.DSN, "URI to database")
+	pflag.StringVarP(&cfg.FSFolder, "fsfolder", "f", cfg.FSFolder, "File storage folder")
 	pflag.StringVar(&cfg.SecretKey, "secret", cfg.SecretKey, "Authorization token encryption key")
 	pflag.DurationVar(&cfg.UserTokenTTL, "tokenttl", cfg.UserTokenTTL, "User token lifetime")
 	pflag.DurationVar(&cfg.RepositoryTimeout, "repotimeout", cfg.RepositoryTimeout, "Repository connection timeout")
