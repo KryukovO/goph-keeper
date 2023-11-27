@@ -112,8 +112,6 @@ func (a *App) Run(ctx context.Context) error {
 		case <-sigCtx.Done():
 		}
 
-		a.log.Info("Stopping server...")
-
 		a.shutdown()
 
 		return nil
@@ -140,6 +138,8 @@ func (a *App) runGRPCServer(storageServer *sgrpc.KeeperServer) error {
 }
 
 func (a *App) shutdown() {
+	a.log.Info("Stopping server...")
+
 	a.grpcServer.GracefulStop()
 
 	a.log.Info("gRPC-server stopped gracefully")
