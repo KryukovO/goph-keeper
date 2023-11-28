@@ -29,7 +29,7 @@ func main() {
 
 	helpFlag := false
 
-	pflag.BoolVarP(&helpFlag, "help", "h", false, "Shows gophermart usage")
+	pflag.BoolVarP(&helpFlag, "help", "h", false, "Shows usage")
 
 	pflag.StringVarP(&cfg.Address, "address", "a", cfg.Address, "Address to run HTTP server")
 	pflag.StringVarP(&cfg.DSN, "dsn", "d", cfg.DSN, "URI to database")

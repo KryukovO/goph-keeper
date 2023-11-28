@@ -69,11 +69,11 @@ type KeeperClient interface {
 	// DeleteAuthData выполняет удаление пары логин/пароль из репозитория.
 	DeleteAuthData(ctx context.Context, in *DeleteAuthDataRequest, opts ...grpc.CallOption) (*empty.Empty, error)
 	// DeleteTextData выполняет удаление текстовых данных из репозитория.
-	DeleteTextData(ctx context.Context, in *DeleteAuthDataRequest, opts ...grpc.CallOption) (*empty.Empty, error)
+	DeleteTextData(ctx context.Context, in *DeleteTextDataRequest, opts ...grpc.CallOption) (*empty.Empty, error)
 	// DeleteBinaryData выполняет удаление бинарных данных из хранилища.
-	DeleteBinaryData(ctx context.Context, in *DeleteAuthDataRequest, opts ...grpc.CallOption) (*empty.Empty, error)
+	DeleteBinaryData(ctx context.Context, in *DeleteBinaryDataRequest, opts ...grpc.CallOption) (*empty.Empty, error)
 	// DeleteBankData выполняет удаление данных банковских карт из репозитория.
-	DeleteBankData(ctx context.Context, in *DeleteAuthDataRequest, opts ...grpc.CallOption) (*empty.Empty, error)
+	DeleteBankData(ctx context.Context, in *DeleteBankDataRequest, opts ...grpc.CallOption) (*empty.Empty, error)
 	// AuthDataList возвращает список сохраненных пар логин/пароль.
 	AuthDataList(ctx context.Context, in *empty.Empty, opts ...grpc.CallOption) (*AuthDataListResponse, error)
 	// TextLabelsList возвращает список заголовков сохранённых текстовых данных.
@@ -213,7 +213,7 @@ func (c *keeperClient) DeleteAuthData(ctx context.Context, in *DeleteAuthDataReq
 	return out, nil
 }
 
-func (c *keeperClient) DeleteTextData(ctx context.Context, in *DeleteAuthDataRequest, opts ...grpc.CallOption) (*empty.Empty, error) {
+func (c *keeperClient) DeleteTextData(ctx context.Context, in *DeleteTextDataRequest, opts ...grpc.CallOption) (*empty.Empty, error) {
 	out := new(empty.Empty)
 	err := c.cc.Invoke(ctx, Keeper_DeleteTextData_FullMethodName, in, out, opts...)
 	if err != nil {
@@ -222,7 +222,7 @@ func (c *keeperClient) DeleteTextData(ctx context.Context, in *DeleteAuthDataReq
 	return out, nil
 }
 
-func (c *keeperClient) DeleteBinaryData(ctx context.Context, in *DeleteAuthDataRequest, opts ...grpc.CallOption) (*empty.Empty, error) {
+func (c *keeperClient) DeleteBinaryData(ctx context.Context, in *DeleteBinaryDataRequest, opts ...grpc.CallOption) (*empty.Empty, error) {
 	out := new(empty.Empty)
 	err := c.cc.Invoke(ctx, Keeper_DeleteBinaryData_FullMethodName, in, out, opts...)
 	if err != nil {
@@ -231,7 +231,7 @@ func (c *keeperClient) DeleteBinaryData(ctx context.Context, in *DeleteAuthDataR
 	return out, nil
 }
 
-func (c *keeperClient) DeleteBankData(ctx context.Context, in *DeleteAuthDataRequest, opts ...grpc.CallOption) (*empty.Empty, error) {
+func (c *keeperClient) DeleteBankData(ctx context.Context, in *DeleteBankDataRequest, opts ...grpc.CallOption) (*empty.Empty, error) {
 	out := new(empty.Empty)
 	err := c.cc.Invoke(ctx, Keeper_DeleteBankData_FullMethodName, in, out, opts...)
 	if err != nil {
@@ -353,11 +353,11 @@ type KeeperServer interface {
 	// DeleteAuthData выполняет удаление пары логин/пароль из репозитория.
 	DeleteAuthData(context.Context, *DeleteAuthDataRequest) (*empty.Empty, error)
 	// DeleteTextData выполняет удаление текстовых данных из репозитория.
-	DeleteTextData(context.Context, *DeleteAuthDataRequest) (*empty.Empty, error)
+	DeleteTextData(context.Context, *DeleteTextDataRequest) (*empty.Empty, error)
 	// DeleteBinaryData выполняет удаление бинарных данных из хранилища.
-	DeleteBinaryData(context.Context, *DeleteAuthDataRequest) (*empty.Empty, error)
+	DeleteBinaryData(context.Context, *DeleteBinaryDataRequest) (*empty.Empty, error)
 	// DeleteBankData выполняет удаление данных банковских карт из репозитория.
-	DeleteBankData(context.Context, *DeleteAuthDataRequest) (*empty.Empty, error)
+	DeleteBankData(context.Context, *DeleteBankDataRequest) (*empty.Empty, error)
 	// AuthDataList возвращает список сохраненных пар логин/пароль.
 	AuthDataList(context.Context, *empty.Empty) (*AuthDataListResponse, error)
 	// TextLabelsList возвращает список заголовков сохранённых текстовых данных.
@@ -409,13 +409,13 @@ func (UnimplementedKeeperServer) UpdateBankData(context.Context, *UpdateBankData
 func (UnimplementedKeeperServer) DeleteAuthData(context.Context, *DeleteAuthDataRequest) (*empty.Empty, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method DeleteAuthData not implemented")
 }
-func (UnimplementedKeeperServer) DeleteTextData(context.Context, *DeleteAuthDataRequest) (*empty.Empty, error) {
+func (UnimplementedKeeperServer) DeleteTextData(context.Context, *DeleteTextDataRequest) (*empty.Empty, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method DeleteTextData not implemented")
 }
-func (UnimplementedKeeperServer) DeleteBinaryData(context.Context, *DeleteAuthDataRequest) (*empty.Empty, error) {
+func (UnimplementedKeeperServer) DeleteBinaryData(context.Context, *DeleteBinaryDataRequest) (*empty.Empty, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method DeleteBinaryData not implemented")
 }
-func (UnimplementedKeeperServer) DeleteBankData(context.Context, *DeleteAuthDataRequest) (*empty.Empty, error) {
+func (UnimplementedKeeperServer) DeleteBankData(context.Context, *DeleteBankDataRequest) (*empty.Empty, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method DeleteBankData not implemented")
 }
 func (UnimplementedKeeperServer) AuthDataList(context.Context, *empty.Empty) (*AuthDataListResponse, error) {
@@ -641,7 +641,7 @@ func _Keeper_DeleteAuthData_Handler(srv interface{}, ctx context.Context, dec fu
 }
 
 func _Keeper_DeleteTextData_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(DeleteAuthDataRequest)
+	in := new(DeleteTextDataRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -653,13 +653,13 @@ func _Keeper_DeleteTextData_Handler(srv interface{}, ctx context.Context, dec fu
 		FullMethod: Keeper_DeleteTextData_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(KeeperServer).DeleteTextData(ctx, req.(*DeleteAuthDataRequest))
+		return srv.(KeeperServer).DeleteTextData(ctx, req.(*DeleteTextDataRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
 func _Keeper_DeleteBinaryData_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(DeleteAuthDataRequest)
+	in := new(DeleteBinaryDataRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -671,13 +671,13 @@ func _Keeper_DeleteBinaryData_Handler(srv interface{}, ctx context.Context, dec 
 		FullMethod: Keeper_DeleteBinaryData_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(KeeperServer).DeleteBinaryData(ctx, req.(*DeleteAuthDataRequest))
+		return srv.(KeeperServer).DeleteBinaryData(ctx, req.(*DeleteBinaryDataRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
 func _Keeper_DeleteBankData_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(DeleteAuthDataRequest)
+	in := new(DeleteBankDataRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -689,7 +689,7 @@ func _Keeper_DeleteBankData_Handler(srv interface{}, ctx context.Context, dec fu
 		FullMethod: Keeper_DeleteBankData_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(KeeperServer).DeleteBankData(ctx, req.(*DeleteAuthDataRequest))
+		return srv.(KeeperServer).DeleteBankData(ctx, req.(*DeleteBankDataRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }

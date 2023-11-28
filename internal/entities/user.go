@@ -25,6 +25,8 @@ type User struct {
 	EncryptedPassword string
 	// Salt - добавочная соль к паролю.
 	Salt string
+	// Subscription - тип подписки пользователя на файловое хранилище.
+	Subscription Subscription
 }
 
 // Encrypt выполняет шифрование поля Password с добавлением соли.

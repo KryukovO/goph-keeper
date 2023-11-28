@@ -4,14 +4,14 @@ package repository
 import (
 	"context"
 
-	"github.com/KryukovO/goph-keeper/internal/server/entities"
+	"github.com/KryukovO/goph-keeper/internal/entities"
 )
 
 // UserRepository описывает интерфейс репозитория сервера
 // для управления пользователями.
 type UserRepository interface {
 	// CreateUser выполняет запись пользователя user в репозиторий.
-	CreateUser(ctx context.Context, user entities.User, subscription entities.Subscription) (userID int64, err error)
+	CreateUser(ctx context.Context, user entities.User) (userID int64, err error)
 	// User выполняет заполнение полей EncryptedPassword и Salt значениями из репозитория.
 	User(ctx context.Context, user *entities.User) (err error)
 }

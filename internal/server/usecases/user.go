@@ -4,7 +4,7 @@ import (
 	"context"
 	"time"
 
-	"github.com/KryukovO/goph-keeper/internal/server/entities"
+	"github.com/KryukovO/goph-keeper/internal/entities"
 	"github.com/KryukovO/goph-keeper/internal/server/repository"
 )
 
@@ -25,9 +25,7 @@ func NewUserUseCase(repo repository.UserRepository, timeout time.Duration) *User
 }
 
 // Registration выполняет регистрацию пользователя.
-func (uc *UserUseCase) Registration(
-	ctx context.Context, user entities.User, subscription entities.Subscription,
-) (string, error) {
+func (uc *UserUseCase) Registration(ctx context.Context, user entities.User) (string, error) {
 	return "", nil
 }
 

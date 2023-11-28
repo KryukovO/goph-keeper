@@ -53,7 +53,7 @@ func (m *Manager) LoggingInterceptor(
 		st, _ := status.FromError(err)
 
 		m.log.Infof(
-			"[%s] query response status: %d; duration: %s",
+			"[%s] query response status: %s; duration: %s",
 			uuid, st.Code(), time.Since(ts),
 		)
 	} else {

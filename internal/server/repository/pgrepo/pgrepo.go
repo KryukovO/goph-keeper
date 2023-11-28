@@ -4,7 +4,7 @@ package pgrepo
 import (
 	"context"
 
-	"github.com/KryukovO/goph-keeper/internal/server/entities"
+	"github.com/KryukovO/goph-keeper/internal/entities"
 	"github.com/KryukovO/goph-keeper/pkg/postgres"
 )
 
@@ -21,9 +21,7 @@ func NewPgRepo(db *postgres.Postgres) *PgRepo {
 }
 
 // CreateUser выполняет создание пользователя user.
-func (repo *PgRepo) CreateUser(
-	ctx context.Context, user entities.User, subscription entities.Subscription,
-) (int64, error) {
+func (repo *PgRepo) CreateUser(ctx context.Context, user entities.User) (int64, error) {
 	return 0, nil
 }
 

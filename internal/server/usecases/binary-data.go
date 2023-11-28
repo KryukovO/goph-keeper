@@ -4,7 +4,7 @@ import (
 	"context"
 	"time"
 
-	"github.com/KryukovO/goph-keeper/internal/server/entities"
+	"github.com/KryukovO/goph-keeper/internal/entities"
 	"github.com/KryukovO/goph-keeper/internal/server/filestorage"
 	"github.com/KryukovO/goph-keeper/internal/server/repository"
 )

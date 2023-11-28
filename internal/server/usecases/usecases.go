@@ -4,14 +4,14 @@ package usecases
 import (
 	"context"
 
-	"github.com/KryukovO/goph-keeper/internal/server/entities"
+	"github.com/KryukovO/goph-keeper/internal/entities"
 )
 
 // User описывает интерфейс логики взамодействия
 // с репозиторием для управления пользователями.
 type User interface {
 	// Registration выполняет регистрацию пользователя.
-	Registration(ctx context.Context, user entities.User, subscription entities.Subscription) (token string, err error)
+	Registration(ctx context.Context, user entities.User) (token string, err error)
 	// Authorization выполняет авторизацию пользователя.
 	Authorization(ctx context.Context, user entities.User) (token string, err error)
 }

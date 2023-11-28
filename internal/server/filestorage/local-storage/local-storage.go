@@ -6,7 +6,7 @@ import (
 	"strconv"
 	"sync"
 
-	"github.com/KryukovO/goph-keeper/internal/server/entities"
+	"github.com/KryukovO/goph-keeper/internal/entities"
 )
 
 // LocalStorage реализует лдокальное файловое хранилище.

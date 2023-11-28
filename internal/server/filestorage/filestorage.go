@@ -1,7 +1,7 @@
 // Package filestorage описывает интерфейс файлового хранилища.
 package filestorage
 
-import "github.com/KryukovO/goph-keeper/internal/server/entities"
+import "github.com/KryukovO/goph-keeper/internal/entities"
 
 // FileStorage - интерфейс файлового хранилища.
 type FileStorage interface {

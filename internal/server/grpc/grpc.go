@@ -100,17 +100,17 @@ func (s KeeperServer) DeleteAuthData(ctx context.Context, req *api.DeleteAuthDat
 }
 
 // DeleteTextData выполняет удаление текстовых данных из репозитория.
-func (s KeeperServer) DeleteTextData(ctx context.Context, req *api.DeleteAuthDataRequest) (*empty.Empty, error) {
+func (s KeeperServer) DeleteTextData(ctx context.Context, req *api.DeleteTextDataRequest) (*empty.Empty, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method DeleteTextData not implemented")
 }
 
 // DeleteBinaryData выполняет удаление бинарных данных из хранилища.
-func (s KeeperServer) DeleteBinaryData(ctx context.Context, req *api.DeleteAuthDataRequest) (*empty.Empty, error) {
+func (s KeeperServer) DeleteBinaryData(ctx context.Context, req *api.DeleteBinaryDataRequest) (*empty.Empty, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method DeleteBinaryData not implemented")
 }
 
 // DeleteBankData выполняет удаление данных банковских карт из репозитория.
-func (s KeeperServer) DeleteBankData(ctx context.Context, req *api.DeleteAuthDataRequest) (*empty.Empty, error) {
+func (s KeeperServer) DeleteBankData(ctx context.Context, req *api.DeleteBankDataRequest) (*empty.Empty, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method DeleteBankData not implemented")
 }
 

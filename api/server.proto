@@ -33,11 +33,11 @@ service Keeper {
     // DeleteAuthData выполняет удаление пары логин/пароль из репозитория.
     rpc DeleteAuthData(DeleteAuthDataRequest) returns (google.protobuf.Empty);
     // DeleteTextData выполняет удаление текстовых данных из репозитория.
-    rpc DeleteTextData(DeleteAuthDataRequest) returns (google.protobuf.Empty);
+    rpc DeleteTextData(DeleteTextDataRequest) returns (google.protobuf.Empty);
     // DeleteBinaryData выполняет удаление бинарных данных из хранилища.
-    rpc DeleteBinaryData(DeleteAuthDataRequest) returns (google.protobuf.Empty);
+    rpc DeleteBinaryData(DeleteBinaryDataRequest) returns (google.protobuf.Empty);
     // DeleteBankData выполняет удаление данных банковских карт из репозитория.
-    rpc DeleteBankData(DeleteAuthDataRequest) returns (google.protobuf.Empty);
+    rpc DeleteBankData(DeleteBankDataRequest) returns (google.protobuf.Empty);
 
     // AuthDataList возвращает список сохраненных пар логин/пароль.
     rpc AuthDataList(google.protobuf.Empty) returns (AuthDataListResponse);
