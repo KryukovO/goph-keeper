@@ -17,11 +17,10 @@ func (a *App) setupMainMenu() {
 	})
 
 	a.list.AddItem("Данные банковских карт", "", '3', func() {
-
+		a.setupBankDataMenu()
 	})
 
 	a.list.AddItem("Файлы", "", '4', func() {
-
 	})
 
 	a.flex.SetDirection(tview.FlexRow).

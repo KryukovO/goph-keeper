@@ -74,7 +74,6 @@ func (a *App) setupAuthDataMenu() {
 					Resource: item.Resource,
 					Login:    item.Login,
 				})
-
 				if err != nil {
 					a.logCh <- err.Error()
 
@@ -89,8 +88,6 @@ func (a *App) setupAuthDataMenu() {
 		AddItem(tview.NewButton("Назад").SetSelectedFunc(
 			func() {
 				a.setupMainMenu()
-
-				a.pages.SwitchToPage(menuPage)
 			},
 		), 0, 1, false)
 }

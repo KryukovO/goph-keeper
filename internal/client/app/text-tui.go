@@ -49,7 +49,6 @@ func (a *App) setupTextDataMenu() {
 				resp, err := a.client.TextData(ctx, &serverpb.TextDataRequest{
 					Label: label,
 				})
-
 				if err != nil {
 					a.logCh <- err.Error()
 
@@ -75,7 +74,6 @@ func (a *App) setupTextDataMenu() {
 				_, err := a.client.DeleteTextData(ctx, &serverpb.DeleteTextDataRequest{
 					Label: label,
 				})
-
 				if err != nil {
 					a.logCh <- err.Error()
 
@@ -160,7 +158,5 @@ func (a *App) setupTextDataForm(textData *entities.TextData) {
 
 	a.form.AddButton("Отмена", func() {
 		a.setupMainMenu()
-
-		a.pages.SwitchToPage(menuPage)
 	})
 }
