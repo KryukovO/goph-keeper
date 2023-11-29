@@ -5,6 +5,7 @@ import (
 	"os"
 	"strconv"
 	"sync"
+	"sync/atomic"
 
 	"github.com/KryukovO/goph-keeper/internal/entities"
 )
@@ -12,7 +13,7 @@ import (
 // LocalStorage реализует лдокальное файловое хранилище.
 type LocalStorage struct {
 	mutex sync.RWMutex
-	open  bool // open - признак доступности хранилища.
+	open  atomic.Bool // open - признак доступности хранилища.
 
 	storeFolder   string                          // storeFolder - папка для хранения файлов.
 	subscriptions map[int64]entities.Subscription // subscriptions - информация о подписках пользователей
@@ -29,7 +30,6 @@ var subscriptionLimits = map[entities.Subscription]int64{
 // NewLocalStorage возвращает новый объект LocalStorage.
 func NewLocalStorage(path string) (*LocalStorage, error) {
 	s := &LocalStorage{
-		open:          true,
 		storeFolder:   path,
 		subscriptions: make(map[int64]entities.Subscription),
 		files:         make(map[int64]map[string]int64),
@@ -39,6 +39,8 @@ func NewLocalStorage(path string) (*LocalStorage, error) {
 	if err != nil {
 		return nil, err
 	}
+
+	s.open.Store(true)
 
 	return s, nil
 }
@@ -93,7 +95,7 @@ func (s *LocalStorage) Save(file entities.File) error {
 	s.mutex.Lock()
 	defer s.mutex.Unlock()
 
-	if !s.open {
+	if !s.open.Load() {
 		return nil
 	}
 
@@ -105,7 +107,7 @@ func (s *LocalStorage) List(userID int64) ([]string, error) {
 	s.mutex.RLock()
 	defer s.mutex.RUnlock()
 
-	if !s.open {
+	if !s.open.Load() {
 		return []string{}, nil
 	}
 
@@ -117,7 +119,7 @@ func (s *LocalStorage) Load(file *entities.File) error {
 	s.mutex.RLock()
 	defer s.mutex.RUnlock()
 
-	if !s.open {
+	if !s.open.Load() {
 		return nil
 	}
 
@@ -129,7 +131,7 @@ func (s *LocalStorage) Delete(file entities.File) error {
 	s.mutex.Lock()
 	defer s.mutex.Unlock()
 
-	if !s.open {
+	if !s.open.Load() {
 		return nil
 	}
 
@@ -141,7 +143,7 @@ func (s *LocalStorage) SetSubscriptions(subscriptions map[int64]entities.Subscri
 	s.mutex.Lock()
 	defer s.mutex.Unlock()
 
-	if !s.open {
+	if !s.open.Load() {
 		return
 	}
 
@@ -153,7 +155,7 @@ func (s *LocalStorage) UpdateSubscription(userID int64, subscription entities.Su
 	s.mutex.Lock()
 	defer s.mutex.Unlock()
 
-	if !s.open {
+	if !s.open.Load() {
 		return
 	}
 
@@ -162,8 +164,5 @@ func (s *LocalStorage) UpdateSubscription(userID int64, subscription entities.Su
 
 // Close закрывает хранилище.
 func (s *LocalStorage) Close() {
-	s.mutex.Lock()
-	defer s.mutex.Unlock()
-
-	s.open = false
+	s.open.Store(false)
 }
