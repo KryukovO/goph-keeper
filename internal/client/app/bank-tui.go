@@ -101,6 +101,8 @@ func (a *App) setupBankDataForm(bankData *entities.BankData) {
 		bankData = &entities.BankData{}
 	}
 
+	oldNumber := bankData.Number
+
 	a.flex.Clear()
 	a.form.Clear(true)
 
@@ -145,6 +147,7 @@ func (a *App) setupBankDataForm(bankData *entities.BankData) {
 			})
 		} else {
 			_, err = a.client.UpdateBankData(ctx, &serverpb.UpdateBankDataRequest{
+				OldNumber: oldNumber,
 				Data: &serverpb.BankData{
 					Number:         bankData.Number,
 					CardholderName: bankData.CardholderName,

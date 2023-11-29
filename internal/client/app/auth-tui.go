@@ -99,6 +99,9 @@ func (a *App) setupAuthDataForm(authData *entities.AuthData) {
 		authData = &entities.AuthData{}
 	}
 
+	oldResource := authData.Resource
+	oldLogin := authData.Login
+
 	a.flex.Clear()
 	a.form.Clear(true)
 
@@ -138,6 +141,8 @@ func (a *App) setupAuthDataForm(authData *entities.AuthData) {
 			})
 		} else {
 			_, err = a.client.UpdateAuthData(ctx, &serverpb.UpdateAuthDataRequest{
+				OldResource: oldResource,
+				OldLogin:    oldLogin,
 				Data: &serverpb.AuthData{
 					Resource:     authData.Resource,
 					Login:        authData.Login,

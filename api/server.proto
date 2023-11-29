@@ -125,15 +125,19 @@ message AddBankDataRequest {
 }
 
 message UpdateAuthDataRequest {
-    AuthData Data = 1; // Данные для сохранения
+    string OldResource = 1; // Ресурс для обновления
+    string OldLogin = 2; // Логин для обновления
+    AuthData Data = 3; // Данные для сохранения
 }
 
 message UpdateTextDataRequest {
-    TextData Data = 1; // Данные для сохранения
+    string OldLabel = 1; // Заголовок данных для обновления
+    TextData Data = 2; // Данные для сохранения
 }
 
 message UpdateBankDataRequest {
-    BankData Data = 1; // Данные для сохранения
+    string OldNumber = 1; // Номер карты для обновления
+    BankData Data = 2; // Данные для сохранения
 }
 
 message DeleteAuthDataRequest {

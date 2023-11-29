@@ -101,6 +101,8 @@ func (a *App) setupTextDataForm(textData *entities.TextData) {
 		textData = &entities.TextData{}
 	}
 
+	oldLabel := textData.Label
+
 	a.flex.Clear()
 	a.form.Clear(true)
 
@@ -135,6 +137,7 @@ func (a *App) setupTextDataForm(textData *entities.TextData) {
 			})
 		} else {
 			_, err = a.client.UpdateTextData(ctx, &serverpb.UpdateTextDataRequest{
+				OldLabel: oldLabel,
 				Data: &serverpb.TextData{
 					Label:    textData.Label,
 					Text:     textData.Data,
