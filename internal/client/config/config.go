@@ -9,7 +9,8 @@ import (
 
 const (
 	address        = "localhost:8080"
-	requestTimeout = 5 * time.Second
+	requestTimeout = 15 * time.Second
+	fileStorage    = "./"
 )
 
 // Config - конфигурация сервера.
@@ -18,6 +19,8 @@ type Config struct {
 	Address string
 	// RequestTimeout - ограничение времени выполнения запроса.
 	RequestTimeout time.Duration
+	// FileStorage - путь до директории в которую будут сохраняться файлы.
+	FileStorage string
 }
 
 // NewConfig возвращает новый объект Config.
@@ -28,12 +31,15 @@ func NewConfig() *Config {
 
 	vpr.BindEnv("server_address")
 	vpr.BindEnv("req_timeout")
+	vpr.BindEnv("file_storage")
 
 	vpr.SetDefault("server_address", address)
 	vpr.SetDefault("req_timeout", requestTimeout)
+	vpr.SetDefault("file_storage", fileStorage)
 
 	return &Config{
 		Address:        vpr.GetString("server_address"),
 		RequestTimeout: vpr.GetDuration("req_timeout"),
+		FileStorage:    vpr.GetString("file_storage"),
 	}
 }

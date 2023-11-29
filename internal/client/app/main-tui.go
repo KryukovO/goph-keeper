@@ -21,6 +21,7 @@ func (a *App) setupMainMenu() {
 	})
 
 	a.list.AddItem("Файлы", "", '4', func() {
+		a.setupBinaryDataMenu()
 	})
 
 	a.flex.SetDirection(tview.FlexRow).

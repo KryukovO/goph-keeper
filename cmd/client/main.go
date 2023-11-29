@@ -27,6 +27,7 @@ func main() {
 
 	pflag.StringVarP(&cfg.Address, "address", "a", cfg.Address, "Address to run HTTP server")
 	pflag.DurationVarP(&cfg.RequestTimeout, "timeout", "t", cfg.RequestTimeout, "Request timeout")
+	pflag.StringVarP(&cfg.FileStorage, "files", "f", cfg.FileStorage, "File storage directory")
 
 	pflag.Parse()
 

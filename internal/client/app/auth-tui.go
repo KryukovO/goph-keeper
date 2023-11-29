@@ -160,13 +160,13 @@ func (a *App) setupAuthDataForm(authData *entities.AuthData) {
 
 		a.logCh <- "Данные сохранены"
 
-		a.setupMainMenu()
+		a.setupAuthDataMenu()
 
 		a.pages.SwitchToPage(menuPage)
 	})
 
-	a.form.AddButton("Отмена", func() {
-		a.setupMainMenu()
+	a.form.AddButton("Назад", func() {
+		a.setupAuthDataMenu()
 
 		a.pages.SwitchToPage(menuPage)
 	})

@@ -82,7 +82,7 @@ func (a *App) setupTextDataMenu() {
 
 				a.logCh <- "Данные удалены"
 
-				a.setupAuthDataMenu()
+				a.setupTextDataMenu()
 			},
 		), 0, 1, false).
 		AddItem(tview.NewButton("Назад").SetSelectedFunc(
@@ -154,12 +154,12 @@ func (a *App) setupTextDataForm(textData *entities.TextData) {
 
 		a.logCh <- "Данные сохранены"
 
-		a.setupMainMenu()
+		a.setupTextDataMenu()
 
 		a.pages.SwitchToPage(menuPage)
 	})
 
-	a.form.AddButton("Отмена", func() {
-		a.setupMainMenu()
+	a.form.AddButton("Назад", func() {
+		a.setupTextDataMenu()
 	})
 }

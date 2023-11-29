@@ -71,7 +71,7 @@ func (a *App) setupLoginForm() {
 		}
 	})
 
-	a.form.AddButton("Отмена", func() {
+	a.form.AddButton("Назад", func() {
 		a.setupWelcomeMenu()
 
 		a.pages.SwitchToPage(menuPage)
@@ -124,7 +124,7 @@ func (a *App) setupRegistrationForm() {
 		a.pages.SwitchToPage(menuPage)
 	})
 
-	a.form.AddButton("Отмена", func() {
+	a.form.AddButton("Назад", func() {
 		a.setupWelcomeMenu()
 
 		a.pages.SwitchToPage(menuPage)

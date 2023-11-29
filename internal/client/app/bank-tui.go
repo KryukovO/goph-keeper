@@ -84,7 +84,7 @@ func (a *App) setupBankDataMenu() {
 
 				a.logCh <- "Данные удалены"
 
-				a.setupAuthDataMenu()
+				a.setupBankDataMenu()
 			},
 		), 0, 1, false).
 		AddItem(tview.NewButton("Назад").SetSelectedFunc(
@@ -166,13 +166,13 @@ func (a *App) setupBankDataForm(bankData *entities.BankData) {
 
 		a.logCh <- "Данные сохранены"
 
-		a.setupMainMenu()
+		a.setupBankDataMenu()
 
 		a.pages.SwitchToPage(menuPage)
 	})
 
-	a.form.AddButton("Отмена", func() {
-		a.setupMainMenu()
+	a.form.AddButton("Назад", func() {
+		a.setupBankDataMenu()
 
 		a.pages.SwitchToPage(menuPage)
 	})
