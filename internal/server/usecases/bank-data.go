@@ -30,7 +30,7 @@ func (uc *BankDataUseCase) AddBankData(ctx context.Context, data entities.BankDa
 }
 
 // UpdateBankData выполняет обновление данных банковских карт.
-func (uc *BankDataUseCase) UpdateBankData(ctx context.Context, data entities.BankData) error {
+func (uc *BankDataUseCase) UpdateBankData(ctx context.Context, oldNumber string, data entities.BankData) error {
 	return nil
 }
 

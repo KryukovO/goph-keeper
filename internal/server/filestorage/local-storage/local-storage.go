@@ -125,7 +125,7 @@ func (s *LocalStorage) Load(file *entities.File) error {
 }
 
 // Delete удаляет файл из хранилища.
-func (s *LocalStorage) Delete(file *entities.File) error {
+func (s *LocalStorage) Delete(file entities.File) error {
 	s.mutex.Lock()
 	defer s.mutex.Unlock()
 

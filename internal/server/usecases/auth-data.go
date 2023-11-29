@@ -30,7 +30,7 @@ func (uc *AuthDataUseCase) AddAuthData(ctx context.Context, data entities.AuthDa
 }
 
 // UpdateAuthData выполняет обновление пары логин/пароль.
-func (uc *AuthDataUseCase) UpdateAuthData(ctx context.Context, data entities.AuthData) error {
+func (uc *AuthDataUseCase) UpdateAuthData(ctx context.Context, oldResource, oldLogin string, data entities.AuthData) error {
 	return nil
 }
 

@@ -22,7 +22,7 @@ type AuthData interface {
 	// AddAuthData выполняет сохранение пары логин/пароль.
 	AddAuthData(ctx context.Context, data entities.AuthData) error
 	// UpdateAuthData выполняет обновление пары логин/пароль.
-	UpdateAuthData(ctx context.Context, data entities.AuthData) error
+	UpdateAuthData(ctx context.Context, oldResource, oldLogin string, data entities.AuthData) error
 	// DeleteAuthData выполняет удаление пары логин/пароль.
 	DeleteAuthData(ctx context.Context, data entities.AuthData) error
 	// AuthDataList возвращает список сохраненных пар логин/пароль.
@@ -35,7 +35,7 @@ type TextData interface {
 	// AddTextData выполняет сохранение текстовых данных.
 	AddTextData(ctx context.Context, data entities.TextData) error
 	// UpdateTextData выполняет обновление текстовых данных.
-	UpdateTextData(ctx context.Context, data entities.TextData) error
+	UpdateTextData(ctx context.Context, oldLabel string, data entities.TextData) error
 	// DeleteTextData выполняет удаление текстовых данных.
 	DeleteTextData(ctx context.Context, data entities.TextData) error
 	// TextLabelsList возвращает список заголовков сохранённых текстовых данных.
@@ -50,7 +50,7 @@ type BankData interface {
 	// AddBankData выполняет сохранение данных банковских карт.
 	AddBankData(ctx context.Context, data entities.BankData) error
 	// UpdateBankData выполняет обновление данных банковских карт.
-	UpdateBankData(ctx context.Context, data entities.BankData) error
+	UpdateBankData(ctx context.Context, oldNumber string, data entities.BankData) error
 	// DeleteBankData выполняет удаление данных банковских карт.
 	DeleteBankData(ctx context.Context, data entities.BankData) error
 	// BankCardList возвращает список номеров банковских карт.

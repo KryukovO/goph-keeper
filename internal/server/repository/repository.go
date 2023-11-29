@@ -22,7 +22,7 @@ type AuthDataRepository interface {
 	// AddAuthData выполняет сохранение пары логин/пароль в репозитории.
 	AddAuthData(ctx context.Context, data entities.AuthData) error
 	// UpdateAuthData выполняет обновление пары логин/пароль в репозитории.
-	UpdateAuthData(ctx context.Context, data entities.AuthData) error
+	UpdateAuthData(ctx context.Context, oldResource, oldLogin string, data entities.AuthData) error
 	// DeleteAuthData выполняет удаление пары логин/пароль из репозитория.
 	DeleteAuthData(ctx context.Context, data entities.AuthData) error
 	// AuthDataList возвращает список сохраненных пар логин/пароль из репозитория.
@@ -35,7 +35,7 @@ type TextDataRepository interface {
 	// AddTextData выполняет сохранение текстовых данных в репозитории.
 	AddTextData(ctx context.Context, data entities.TextData) error
 	// UpdateTextData выполняет обновление текстовых данных в репозитории.
-	UpdateTextData(ctx context.Context, data entities.TextData) error
+	UpdateTextData(ctx context.Context, oldLabel string, data entities.TextData) error
 	// DeleteTextData выполняет удаление текстовых данных из репозитория.
 	DeleteTextData(ctx context.Context, data entities.TextData) error
 	// TextLabelsList возвращает список заголовков сохранённых текстовых данных из репозитория.
@@ -50,7 +50,7 @@ type BankDataRepository interface {
 	// AddBankData выполняет сохранение данных банковских карт в репозитории.
 	AddBankData(ctx context.Context, data entities.BankData) error
 	// UpdateBankData выполняет обновление данных банковских карт в репозитории.
-	UpdateBankData(ctx context.Context, data entities.BankData) error
+	UpdateBankData(ctx context.Context, oldNumber string, data entities.BankData) error
 	// DeleteBankData выполняет удаление данных банковских карт из репозитория.
 	DeleteBankData(ctx context.Context, data entities.BankData) error
 	// BankCardList возвращает список номеров банковских карт из репозитория.

@@ -30,7 +30,7 @@ func (uc *TextDataUseCase) AddTextData(ctx context.Context, data entities.TextDa
 }
 
 // UpdateTextData выполняет обновление текстовых данных.
-func (uc *TextDataUseCase) UpdateTextData(ctx context.Context, data entities.TextData) error {
+func (uc *TextDataUseCase) UpdateTextData(ctx context.Context, oldLabel string, data entities.TextData) error {
 	return nil
 }
 

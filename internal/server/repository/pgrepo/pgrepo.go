@@ -46,17 +46,17 @@ func (repo *PgRepo) AddBankData(ctx context.Context, data entities.BankData) err
 }
 
 // UpdateAuthData выполняет обновление пары логин/пароль в репозитории.
-func (repo *PgRepo) UpdateAuthData(ctx context.Context, data entities.AuthData) error {
+func (repo *PgRepo) UpdateAuthData(ctx context.Context, oldResource, oldLogin string, data entities.AuthData) error {
 	return nil
 }
 
 // UpdateTextData выполняет обновление текстовых данных в репозитории.
-func (repo *PgRepo) UpdateTextData(ctx context.Context, data entities.TextData) error {
+func (repo *PgRepo) UpdateTextData(ctx context.Context, oldLabel string, data entities.TextData) error {
 	return nil
 }
 
 // UpdateBankData выполняет обновление данных банковских карт в репозитории.
-func (repo *PgRepo) UpdateBankData(ctx context.Context, data entities.BankData) error {
+func (repo *PgRepo) UpdateBankData(ctx context.Context, oldNumber string, data entities.BankData) error {
 	return nil
 }
 
@@ -88,11 +88,6 @@ func (repo *PgRepo) TextLabelsList(ctx context.Context, userID int64) ([]string,
 // TextData возвращает сохранённые текстовые данные по заголовку из репозитория.
 func (repo *PgRepo) TextData(ctx context.Context, data *entities.TextData) error {
 	return nil
-}
-
-// FileNamesList возвращает список сохранённых файлов из репозитория.
-func (repo *PgRepo) FileNamesList(ctx context.Context, userID int64) ([]string, error) {
-	return []string{}, nil
 }
 
 // BankCardList возвращает список номеров банковских карт из репозитория.
