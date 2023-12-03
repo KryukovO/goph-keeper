@@ -6,6 +6,7 @@ import (
 
 	"github.com/KryukovO/goph-keeper/internal/entities"
 	"github.com/KryukovO/goph-keeper/internal/server/repository"
+	"github.com/KryukovO/goph-keeper/pkg/utils"
 )
 
 // UserUseCase реализует логику взаимодействия
@@ -13,11 +14,16 @@ import (
 type UserUseCase struct {
 	repo repository.UserRepository
 
-	timeout time.Duration
+	timeout  time.Duration
+	secret   []byte
+	tokenTTL time.Duration
 }
 
 // NewAuthDataUseCase возвращает новый объект AuthDataUseCase.
-func NewUserUseCase(repo repository.UserRepository, timeout time.Duration) *UserUseCase {
+func NewUserUseCase(
+	repo repository.UserRepository, timeout time.Duration,
+	secret []byte, tokenTTL time.Duration,
+) *UserUseCase {
 	return &UserUseCase{
 		repo:    repo,
 		timeout: timeout,
@@ -26,10 +32,31 @@ func NewUserUseCase(repo repository.UserRepository, timeout time.Duration) *User
 
 // Registration выполняет регистрацию пользователя.
 func (uc *UserUseCase) Registration(ctx context.Context, user entities.User) (string, error) {
-	return "", nil
+	ctx, cancel := context.WithTimeout(ctx, uc.timeout)
+	defer cancel()
+
+	userID, err := uc.repo.CreateUser(ctx, user)
+	if err != nil {
+		return "", err
+	}
+
+	return utils.BuildJWTString(uc.secret, uc.tokenTTL, userID)
 }
 
 // Authorization выполняет авторизацию пользователя.
 func (uc *UserUseCase) Authorization(ctx context.Context, user entities.User) (string, error) {
-	return "", nil
+	ctx, cancel := context.WithTimeout(ctx, uc.timeout)
+	defer cancel()
+
+	err := uc.repo.User(ctx, &user)
+	if err != nil {
+		return "", err
+	}
+
+	err = user.Validate()
+	if err != nil {
+		return "", err
+	}
+
+	return utils.BuildJWTString(uc.secret, uc.tokenTTL, user.ID)
 }

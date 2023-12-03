@@ -75,7 +75,7 @@ func (a *App) Run(ctx context.Context) error {
 
 	repo := pgrepo.NewPgRepo(db)
 
-	user := usecases.NewUserUseCase(repo, a.cfg.RepositoryTimeout)
+	user := usecases.NewUserUseCase(repo, a.cfg.RepositoryTimeout, []byte(a.cfg.SecretKey), a.cfg.UserTokenTTL)
 	auth := usecases.NewAuthDataUseCase(repo, a.cfg.RepositoryTimeout)
 	txt := usecases.NewTextDataUseCase(repo, a.cfg.RepositoryTimeout)
 	bank := usecases.NewBankDataUseCase(repo, a.cfg.RepositoryTimeout)

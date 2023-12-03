@@ -26,20 +26,32 @@ func NewAuthDataUseCase(repo repository.AuthDataRepository, timeout time.Duratio
 
 // AddAuthData выполняет сохранение пары логин/пароль.
 func (uc *AuthDataUseCase) AddAuthData(ctx context.Context, data entities.AuthData) error {
-	return nil
+	ctx, cancel := context.WithTimeout(ctx, uc.timeout)
+	defer cancel()
+
+	return uc.repo.AddAuthData(ctx, data)
 }
 
 // UpdateAuthData выполняет обновление пары логин/пароль.
 func (uc *AuthDataUseCase) UpdateAuthData(ctx context.Context, oldResource, oldLogin string, data entities.AuthData) error {
-	return nil
+	ctx, cancel := context.WithTimeout(ctx, uc.timeout)
+	defer cancel()
+
+	return uc.repo.UpdateAuthData(ctx, oldResource, oldLogin, data)
 }
 
 // DeleteAuthData выполняет удаление пары логин/пароль.
 func (uc *AuthDataUseCase) DeleteAuthData(ctx context.Context, data entities.AuthData) error {
-	return nil
+	ctx, cancel := context.WithTimeout(ctx, uc.timeout)
+	defer cancel()
+
+	return uc.repo.DeleteAuthData(ctx, data)
 }
 
 // AuthDataList возвращает список сохраненных пар логин/пароль.
 func (uc *AuthDataUseCase) AuthDataList(ctx context.Context, userID int64) ([]entities.AuthData, error) {
-	return []entities.AuthData{}, nil
+	ctx, cancel := context.WithTimeout(ctx, uc.timeout)
+	defer cancel()
+
+	return uc.repo.AuthDataList(ctx, userID)
 }

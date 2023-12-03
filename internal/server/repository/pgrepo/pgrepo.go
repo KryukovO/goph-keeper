@@ -58,12 +58,12 @@ func (repo *PgRepo) CreateUser(ctx context.Context, user entities.User) (int64, 
 func (repo *PgRepo) User(ctx context.Context, user *entities.User) error {
 	query := `
 		SELECT 
-			password, salt 
+			id, password, salt 
 		FROM users
 		WHERE login = $1
 	`
 
-	err := repo.db.QueryRowContext(ctx, query, user.Login).Scan(&user.EncryptedPassword, &user.Salt)
+	err := repo.db.QueryRowContext(ctx, query, user.Login).Scan(&user.ID, &user.EncryptedPassword, &user.Salt)
 	if err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
 			return entities.ErrInvalidLoginPassword

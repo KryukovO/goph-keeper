@@ -20,6 +20,8 @@ var (
 
 // User описывает пользователя системы.
 type User struct {
+	// ID - идентификатор пользователя.
+	ID int64
 	// Login - логин пользователя.
 	Login string
 	// Password - пароль пользователя.
@@ -56,7 +58,7 @@ func (user *User) Encrypt() error {
 // Validate возвращает ErrInvalidLoginPassword, если Password
 // не соответствует EncryptedPassword с учетом Salt.
 // Всегда nil, если EncryptedPassword не установлен.
-func (user *User) Validate(secret []byte) error {
+func (user *User) Validate() error {
 	if user.EncryptedPassword == "" {
 		return nil
 	}

@@ -53,21 +53,21 @@ func (uc *BinaryDataUseCase) initFileStorage(ctx context.Context) error {
 }
 
 // AddBinaryData выполняет сохранение бинарных данных.
-func (uc *BinaryDataUseCase) AddBinaryData(ctx context.Context, data entities.File) error {
-	return nil
+func (uc *BinaryDataUseCase) AddBinaryData(_ context.Context, data entities.File) error {
+	return uc.fs.Save(data)
 }
 
 // DeleteBinaryData выполняет удаление бинарных данных.
-func (uc *BinaryDataUseCase) DeleteBinaryData(ctx context.Context, data entities.File) error {
-	return nil
+func (uc *BinaryDataUseCase) DeleteBinaryData(_ context.Context, data entities.File) error {
+	return uc.fs.Delete(data)
 }
 
 // FileNamesList возвращает список сохранённых файлов.
-func (uc *BinaryDataUseCase) FileNamesList(ctx context.Context, userID int64) ([]string, error) {
-	return []string{}, nil
+func (uc *BinaryDataUseCase) FileNamesList(_ context.Context, userID int64) ([]string, error) {
+	return uc.fs.List(userID)
 }
 
 // BinaryData возвращает сохранённые бинарные данные по имени файла.
-func (uc *BinaryDataUseCase) BinaryData(ctx context.Context, data *entities.File) error {
-	return nil
+func (uc *BinaryDataUseCase) BinaryData(_ context.Context, data *entities.File) error {
+	return uc.fs.Load(data)
 }
