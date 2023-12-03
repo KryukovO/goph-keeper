@@ -63,5 +63,5 @@ type BankDataRepository interface {
 // для взаимодействия с подписками пользователя.
 type SubscriptionRepository interface {
 	// Sunbsriptions возвращает информацию о подписке пользователей из репозитория.
-	Sunbsriptions() (subscriptions map[int64]entities.Subscription, err error)
+	Sunbsriptions(ctx context.Context) (subscriptions map[int64]entities.Subscription, err error)
 }

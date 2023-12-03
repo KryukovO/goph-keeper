@@ -80,16 +80,21 @@ func (a *App) Run(ctx context.Context) error {
 	txt := usecases.NewTextDataUseCase(repo, a.cfg.RepositoryTimeout)
 	bank := usecases.NewBankDataUseCase(repo, a.cfg.RepositoryTimeout)
 
-	binary, err := usecases.NewBinaryDataUseCase(repo, fs, a.cfg.RepositoryTimeout)
+	binary, err := usecases.NewBinaryDataUseCase(ctx, repo, fs, a.cfg.RepositoryTimeout)
 	if err != nil {
 		return err
 	}
 
 	itcManager := sgrpc.NewManager([]byte(a.cfg.SecretKey), a.log)
+
 	a.grpcServer = grpc.NewServer(
 		grpc.ChainUnaryInterceptor(
-			itcManager.LoggingInterceptor,
-			itcManager.AuthInterceptor,
+			itcManager.LoggingUnaryInterceptor,
+			itcManager.AuthUnaryInterceptor,
+		),
+		grpc.ChainStreamInterceptor(
+			itcManager.LoggingStreamInterceptor,
+			itcManager.AuthStreamInterceptor,
 		),
 	)
 

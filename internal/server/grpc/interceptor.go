@@ -35,8 +35,8 @@ func NewManager(secret []byte, log *logrus.Logger) *Manager {
 	}
 }
 
-// LoggingInterceptor - выполняет логгирование входящего gRPC запроса.
-func (m *Manager) LoggingInterceptor(
+// LoggingUnaryInterceptor - выполняет логгирование входящего unary gRPC запроса.
+func (m *Manager) LoggingUnaryInterceptor(
 	ctx context.Context, req interface{},
 	info *grpc.UnaryServerInfo, handler grpc.UnaryHandler,
 ) (interface{}, error) {
@@ -66,8 +66,41 @@ func (m *Manager) LoggingInterceptor(
 	return resp, err
 }
 
-// AuthInterceptor - выполняет аутентификацию пользователя из входящего gRPC запроса.
-func (m *Manager) AuthInterceptor(
+// LoggingStreamInterceptor - выполняет логгирование входящего stream gRPC запроса.
+func (m *Manager) LoggingStreamInterceptor(
+	srv interface{}, stream grpc.ServerStream,
+	info *grpc.StreamServerInfo, handler grpc.StreamHandler,
+) error {
+	uuid := uuid.New()
+	sw := newStreamWrapper(stream)
+
+	uuidCtx := metadata.AppendToOutgoingContext(sw.Context(), "uuid", uuid.String())
+	sw.SetContext(uuidCtx)
+
+	m.log.Infof("[%s] received gRPC request: %s", uuid, info.FullMethod)
+
+	ts := time.Now()
+	err := handler(srv, sw)
+
+	if err != nil {
+		st, _ := status.FromError(err)
+
+		m.log.Infof(
+			"[%s] query response status: %s; duration: %s",
+			uuid, st.Code(), time.Since(ts),
+		)
+	} else {
+		m.log.Infof(
+			"[%s] query response status: OK; duration: %s",
+			uuid, time.Since(ts),
+		)
+	}
+
+	return err
+}
+
+// AuthUnaryInterceptor - выполняет аутентификацию пользователя из входящего unary gRPC запроса.
+func (m *Manager) AuthUnaryInterceptor(
 	ctx context.Context, req interface{},
 	info *grpc.UnaryServerInfo, handler grpc.UnaryHandler,
 ) (interface{}, error) {
@@ -96,4 +129,34 @@ func (m *Manager) AuthInterceptor(
 	userCtx := metadata.AppendToOutgoingContext(ctx, "userID", strconv.FormatInt(userID, 10))
 
 	return handler(userCtx, req)
+}
+
+// AuthStreamInterceptor - выполняет аутентификацию пользователя из входящего stream gRPC запроса.
+func (m *Manager) AuthStreamInterceptor(
+	srv interface{}, stream grpc.ServerStream,
+	info *grpc.StreamServerInfo, handler grpc.StreamHandler,
+) error {
+	var (
+		token  string
+		userID int64
+	)
+
+	sw := newStreamWrapper(stream)
+
+	if md, ok := metadata.FromIncomingContext(sw.Context()); ok {
+		values := md.Get("token")
+		if len(values) > 0 {
+			token = values[0]
+		}
+	}
+
+	err := utils.ParseTokenString(&userID, token, m.secret)
+	if err != nil {
+		return status.Error(codes.Unauthenticated, err.Error())
+	}
+
+	userCtx := metadata.AppendToOutgoingContext(sw.Context(), "userID", strconv.FormatInt(userID, 10))
+	sw.SetContext(userCtx)
+
+	return handler(srv, sw)
 }

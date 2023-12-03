@@ -20,7 +20,8 @@ type BinaryDataUseCase struct {
 
 // NewBinaryDataUseCase возвращает новый объект BinaryDataUseCase.
 func NewBinaryDataUseCase(
-	repo repository.SubscriptionRepository, fs filestorage.FileStorage, timeout time.Duration,
+	ctx context.Context, repo repository.SubscriptionRepository,
+	fs filestorage.FileStorage, timeout time.Duration,
 ) (*BinaryDataUseCase, error) {
 	uc := &BinaryDataUseCase{
 		repo:    repo,
@@ -28,7 +29,7 @@ func NewBinaryDataUseCase(
 		timeout: timeout,
 	}
 
-	err := uc.initFileStorage()
+	err := uc.initFileStorage(ctx)
 	if err != nil {
 		return nil, err
 	}
@@ -37,8 +38,11 @@ func NewBinaryDataUseCase(
 }
 
 // initFileStorage инициализирует файловое хранилище.
-func (uc *BinaryDataUseCase) initFileStorage() error {
-	subscriptions, err := uc.repo.Sunbsriptions()
+func (uc *BinaryDataUseCase) initFileStorage(ctx context.Context) error {
+	ctx, cancel := context.WithTimeout(ctx, uc.timeout)
+	defer cancel()
+
+	subscriptions, err := uc.repo.Sunbsriptions(ctx)
 	if err != nil {
 		return err
 	}

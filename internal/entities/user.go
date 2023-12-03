@@ -13,7 +13,10 @@ import (
 
 const PswdEncCost = 14
 
-var ErrInvalidLoginPassword = errors.New("invalid login/password")
+var (
+	ErrInvalidLoginPassword = errors.New("invalid login/password")
+	ErrUserAlreadyExists    = errors.New("user with the same login already exists")
+)
 
 // User описывает пользователя системы.
 type User struct {
