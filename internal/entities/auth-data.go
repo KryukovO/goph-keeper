@@ -2,6 +2,7 @@ package entities
 
 import "errors"
 
+// ErrAuthDataAlreadyExists возвращается, если аналогичная пара логин/пароль уже существует.
 var ErrAuthDataAlreadyExists = errors.New("data with the same login for this resource already exists")
 
 // AuthData описывает пару логин/пароль пользователя.

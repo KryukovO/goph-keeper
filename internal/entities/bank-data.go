@@ -2,6 +2,7 @@ package entities
 
 import "errors"
 
+// ErrBankDataAlreadyExists возвращается, если аналогичные данные банковской карты уже существуют.
 var ErrBankDataAlreadyExists = errors.New("data with the same card number already exists")
 
 // BankData описывает данные банковской карты пользователя.

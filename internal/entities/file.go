@@ -1,6 +1,12 @@
 package entities
 
-import "bytes"
+import (
+	"bytes"
+	"errors"
+)
+
+// ErrFileIsTooBig возвращается, если размер файла превышает ограничение файлового хранилища.
+var ErrFileIsTooBig = errors.New("file is too big")
 
 // File описывает файл пользователя.
 type File struct {

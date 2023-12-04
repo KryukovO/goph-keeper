@@ -59,16 +59,17 @@ func (a *App) setupLoginForm() {
 			Login:    a.user.Login,
 			Password: a.user.Password,
 		})
-
 		if err != nil {
 			a.logCh <- err.Error()
-		} else {
-			a.token = resp.Token
 
-			a.setupMainMenu()
-
-			a.pages.SwitchToPage(menuPage)
+			return
 		}
+
+		a.token = resp.GetToken()
+
+		a.setupMainMenu()
+
+		a.pages.SwitchToPage(menuPage)
 	})
 
 	a.form.AddButton("Назад", func() {
@@ -103,11 +104,11 @@ func (a *App) setupRegistrationForm() {
 		ctx, cancel := context.WithTimeout(context.Background(), a.cfg.RequestTimeout)
 		defer cancel()
 
-		resp, err := a.client.Authorization(ctx, &serverpb.AuthorizationRequest{
-			Login:    bufUser.Login,
-			Password: bufUser.Password,
+		resp, err := a.client.Registration(ctx, &serverpb.RegistrationRequest{
+			Login:        bufUser.Login,
+			Password:     bufUser.Password,
+			Subscription: entities.ConvertSubscription(bufUser.Subscription),
 		})
-
 		if err != nil {
 			a.logCh <- err.Error()
 

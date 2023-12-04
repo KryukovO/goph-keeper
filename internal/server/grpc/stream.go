@@ -13,9 +13,10 @@ type streamWrapper struct {
 
 func newStreamWrapper(stream grpc.ServerStream) *streamWrapper {
 	ctx := stream.Context()
+
 	return &streamWrapper{
-		stream,
-		ctx,
+		ServerStream: stream,
+		ctx:          ctx,
 	}
 }
 

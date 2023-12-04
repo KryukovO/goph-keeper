@@ -28,7 +28,7 @@ func NewPgRepo(db *postgres.Postgres) *PgRepo {
 // CreateUser выполняет создание пользователя user.
 func (repo *PgRepo) CreateUser(ctx context.Context, user entities.User) (int64, error) {
 	query := `
-		INSERT INTO users(login, password, salt) VALUES($1, $2, $3)
+		INSERT INTO users(login, password, salt, subscr) VALUES($1, $2, $3, $4)
 		RETURNING id
 	`
 
@@ -41,7 +41,10 @@ func (repo *PgRepo) CreateUser(ctx context.Context, user entities.User) (int64, 
 
 	var id int64
 
-	err = tx.QueryRowContext(ctx, query, user.Login, user.EncryptedPassword, user.Salt).Scan(&id)
+	err = tx.QueryRowContext(
+		ctx, query, user.Login, user.EncryptedPassword,
+		user.Salt, user.Subscription,
+	).Scan(&id)
 	if err != nil {
 		var pgErr *pgconn.PgError
 		if errors.As(err, &pgErr) && pgErr.Code == pgerrcode.UniqueViolation {
@@ -134,9 +137,9 @@ func (repo *PgRepo) AddTextData(ctx context.Context, data entities.TextData) err
 // AddBankData выполняет сохранение данных банковских карт в репозитории.
 func (repo *PgRepo) AddBankData(ctx context.Context, data entities.BankData) error {
 	query := `
-		INSERT INTO text_data(
-			id, user_id, "number", name, expired_at, cvv, metadata)
-			VALUES ($1, $2, $3, $4, $5, $6, $7)
+		INSERT INTO bank_data(
+			user_id, "number", name, expired_at, cvv, metadata)
+			VALUES ($1, $2, $3, $4, $5, $6)
 	`
 
 	tx, err := repo.db.BeginTx(ctx, nil)

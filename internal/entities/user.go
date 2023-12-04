@@ -11,11 +11,14 @@ import (
 	"github.com/KryukovO/goph-keeper/pkg/utils"
 )
 
+// PswdEncCost - сложность шифрования пароля.
 const PswdEncCost = 14
 
 var (
+	// ErrInvalidLoginPassword возращается, если получена некорректная пара логин/пароль.
 	ErrInvalidLoginPassword = errors.New("invalid login/password")
-	ErrUserAlreadyExists    = errors.New("user with the same login already exists")
+	// ErrUserAlreadyExists возвращается, если пользователь с таким логином был создан ранее.
+	ErrUserAlreadyExists = errors.New("user with the same login already exists")
 )
 
 // User описывает пользователя системы.

@@ -13,6 +13,7 @@ import (
 	"github.com/KryukovO/goph-keeper/api/serverpb"
 	"github.com/KryukovO/goph-keeper/internal/entities"
 	"github.com/KryukovO/goph-keeper/pkg/utils"
+	"github.com/golang/protobuf/ptypes/empty"
 	"github.com/rivo/tview"
 )
 
@@ -23,11 +24,13 @@ func (a *App) setupBinaryDataMenu() {
 	ctx, cancel := context.WithTimeout(context.Background(), a.cfg.RequestTimeout)
 	defer cancel()
 
-	resp, err := a.client.FileNamesList(ctx, nil)
+	resp, err := a.client.FileNamesList(ctx, &empty.Empty{})
 	if err != nil {
 		a.logCh <- err.Error()
 
 		a.setupMainMenu()
+
+		return
 	}
 
 	fileNames := resp.GetFileNames()
@@ -48,6 +51,10 @@ func (a *App) setupBinaryDataMenu() {
 		), 0, 1, false).
 		AddItem(tview.NewButton("Скачать").SetSelectedFunc(
 			func() {
+				if len(fileNames) < a.list.GetCurrentItem()+1 {
+					return
+				}
+
 				fileName := fileNames[a.list.GetCurrentItem()]
 
 				a.logCh <- fmt.Sprintf("Начало скачивания файла %s в папку %s", fileName, a.cfg.FileStorage)
@@ -115,6 +122,10 @@ func (a *App) setupBinaryDataMenu() {
 		), 0, 1, false).
 		AddItem(tview.NewButton("Удалить").SetSelectedFunc(
 			func() {
+				if len(fileNames) < a.list.GetCurrentItem()+1 {
+					return
+				}
+
 				fileName := fileNames[a.list.GetCurrentItem()]
 
 				ctx, cancel := context.WithTimeout(context.Background(), a.cfg.RequestTimeout)
@@ -169,6 +180,8 @@ func (a *App) setupBinaryDataForm() {
 				return
 			}
 
+			defer file.Close()
+
 			fileName := filepath.Base(filePath)
 
 			ctx, cancel := context.WithTimeout(context.Background(), a.cfg.RequestTimeout)
@@ -197,7 +210,7 @@ func (a *App) setupBinaryDataForm() {
 
 			for {
 				n, err := reader.Read(buffer)
-				if err == io.EOF {
+				if errors.Is(err, io.EOF) {
 					break
 				}
 

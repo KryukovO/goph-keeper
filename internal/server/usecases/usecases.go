@@ -67,7 +67,9 @@ type BinaryData interface {
 	// DeleteBinaryData выполняет удаление бинарных данных.
 	DeleteBinaryData(ctx context.Context, data entities.File) error
 	// FileNamesList возвращает список сохранённых файлов.
-	FileNamesList(ctx context.Context, userID int64) (fileNames []string, err error)
+	FileNamesList(ctx context.Context, userID int64) (fileNames []string)
 	// BinaryData возвращает сохранённые бинарные данные по имени файла.
 	BinaryData(ctx context.Context, data *entities.File) error
+	// UpdateSubscription обновляет информацию о подписке пользователя.
+	UpdateSubscription(ctx context.Context, userID int64, subscription entities.Subscription)
 }

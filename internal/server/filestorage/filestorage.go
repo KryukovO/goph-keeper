@@ -8,7 +8,7 @@ type FileStorage interface {
 	// Save выполняет сохранение файла в хранилище.
 	Save(file entities.File) error
 	// List возвращает список имен файлов пользователя в хранилище.
-	List(userID int64) (files []string, err error)
+	List(userID int64) (files []string)
 	// Load выгружает данные файла из хранилища в file по file.FileName и file.UserID.
 	Load(file *entities.File) error
 	// Delete удаляет файл из хранилища.

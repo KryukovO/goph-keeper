@@ -6,6 +6,7 @@ import (
 
 	"github.com/KryukovO/goph-keeper/api/serverpb"
 	"github.com/KryukovO/goph-keeper/internal/entities"
+	"github.com/golang/protobuf/ptypes/empty"
 	"github.com/rivo/tview"
 )
 
@@ -16,11 +17,13 @@ func (a *App) setupBankDataMenu() {
 	ctx, cancel := context.WithTimeout(context.Background(), a.cfg.RequestTimeout)
 	defer cancel()
 
-	resp, err := a.client.BankCardNumbersList(ctx, nil)
+	resp, err := a.client.BankCardNumbersList(ctx, &empty.Empty{})
 	if err != nil {
 		a.logCh <- err.Error()
 
 		a.setupMainMenu()
+
+		return
 	}
 
 	numbers := resp.GetCardNumbers()
@@ -41,6 +44,10 @@ func (a *App) setupBankDataMenu() {
 		), 0, 1, false).
 		AddItem(tview.NewButton("Изменить").SetSelectedFunc(
 			func() {
+				if len(numbers) < a.list.GetCurrentItem()+1 {
+					return
+				}
+
 				number := numbers[a.list.GetCurrentItem()]
 
 				ctx, cancel := context.WithTimeout(context.Background(), a.cfg.RequestTimeout)
@@ -68,6 +75,10 @@ func (a *App) setupBankDataMenu() {
 		), 0, 1, false).
 		AddItem(tview.NewButton("Удалить").SetSelectedFunc(
 			func() {
+				if len(numbers) < a.list.GetCurrentItem()+1 {
+					return
+				}
+
 				number := numbers[a.list.GetCurrentItem()]
 
 				ctx, cancel := context.WithTimeout(context.Background(), a.cfg.RequestTimeout)

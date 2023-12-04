@@ -25,8 +25,10 @@ func NewUserUseCase(
 	secret []byte, tokenTTL time.Duration,
 ) *UserUseCase {
 	return &UserUseCase{
-		repo:    repo,
-		timeout: timeout,
+		repo:     repo,
+		timeout:  timeout,
+		secret:   secret,
+		tokenTTL: tokenTTL,
 	}
 }
 
@@ -34,6 +36,10 @@ func NewUserUseCase(
 func (uc *UserUseCase) Registration(ctx context.Context, user entities.User) (string, error) {
 	ctx, cancel := context.WithTimeout(ctx, uc.timeout)
 	defer cancel()
+
+	if user.Login == "" || user.Password == "" {
+		return "", entities.ErrInvalidLoginPassword
+	}
 
 	userID, err := uc.repo.CreateUser(ctx, user)
 	if err != nil {
@@ -47,6 +53,10 @@ func (uc *UserUseCase) Registration(ctx context.Context, user entities.User) (st
 func (uc *UserUseCase) Authorization(ctx context.Context, user entities.User) (string, error) {
 	ctx, cancel := context.WithTimeout(ctx, uc.timeout)
 	defer cancel()
+
+	if user.Login == "" || user.Password == "" {
+		return "", entities.ErrInvalidLoginPassword
+	}
 
 	err := uc.repo.User(ctx, &user)
 	if err != nil {

@@ -63,11 +63,16 @@ func (uc *BinaryDataUseCase) DeleteBinaryData(_ context.Context, data entities.F
 }
 
 // FileNamesList возвращает список сохранённых файлов.
-func (uc *BinaryDataUseCase) FileNamesList(_ context.Context, userID int64) ([]string, error) {
+func (uc *BinaryDataUseCase) FileNamesList(_ context.Context, userID int64) []string {
 	return uc.fs.List(userID)
 }
 
 // BinaryData возвращает сохранённые бинарные данные по имени файла.
 func (uc *BinaryDataUseCase) BinaryData(_ context.Context, data *entities.File) error {
 	return uc.fs.Load(data)
+}
+
+// UpdateSubscription обновляет информацию о подписке пользователя.
+func (uc *BinaryDataUseCase) UpdateSubscription(_ context.Context, userID int64, subscription entities.Subscription) {
+	uc.fs.UpdateSubscription(userID, subscription)
 }

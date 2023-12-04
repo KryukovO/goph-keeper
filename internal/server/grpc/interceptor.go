@@ -53,8 +53,8 @@ func (m *Manager) LoggingUnaryInterceptor(
 		st, _ := status.FromError(err)
 
 		m.log.Infof(
-			"[%s] query response status: %s; duration: %s",
-			uuid, st.Code(), time.Since(ts),
+			"[%s] query response status: %s: %s; duration: %s",
+			uuid, st.Code(), st.Message(), time.Since(ts),
 		)
 	} else {
 		m.log.Infof(
@@ -86,8 +86,8 @@ func (m *Manager) LoggingStreamInterceptor(
 		st, _ := status.FromError(err)
 
 		m.log.Infof(
-			"[%s] query response status: %s; duration: %s",
-			uuid, st.Code(), time.Since(ts),
+			"[%s] query response status: %s: %s; duration: %s",
+			uuid, st.Code(), st.Message(), time.Since(ts),
 		)
 	} else {
 		m.log.Infof(

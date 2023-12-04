@@ -6,6 +6,7 @@ import (
 
 	"github.com/KryukovO/goph-keeper/api/serverpb"
 	"github.com/KryukovO/goph-keeper/internal/entities"
+	"github.com/golang/protobuf/ptypes/empty"
 	"github.com/rivo/tview"
 )
 
@@ -16,11 +17,13 @@ func (a *App) setupTextDataMenu() {
 	ctx, cancel := context.WithTimeout(context.Background(), a.cfg.RequestTimeout)
 	defer cancel()
 
-	resp, err := a.client.TextLabelsList(ctx, nil)
+	resp, err := a.client.TextLabelsList(ctx, &empty.Empty{})
 	if err != nil {
 		a.logCh <- err.Error()
 
 		a.setupMainMenu()
+
+		return
 	}
 
 	labels := resp.GetLabels()
@@ -41,6 +44,10 @@ func (a *App) setupTextDataMenu() {
 		), 0, 1, false).
 		AddItem(tview.NewButton("Изменить").SetSelectedFunc(
 			func() {
+				if len(labels) < a.list.GetCurrentItem()+1 {
+					return
+				}
+
 				label := labels[a.list.GetCurrentItem()]
 
 				ctx, cancel := context.WithTimeout(context.Background(), a.cfg.RequestTimeout)
@@ -66,6 +73,10 @@ func (a *App) setupTextDataMenu() {
 		), 0, 1, false).
 		AddItem(tview.NewButton("Удалить").SetSelectedFunc(
 			func() {
+				if len(labels) < a.list.GetCurrentItem()+1 {
+					return
+				}
+
 				label := labels[a.list.GetCurrentItem()]
 
 				ctx, cancel := context.WithTimeout(context.Background(), a.cfg.RequestTimeout)

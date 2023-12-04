@@ -1,14 +1,39 @@
+// Package localstorage реализует локальное файловое хранилище.
 package localstorage
 
 import (
+	"bufio"
+	"bytes"
+	"errors"
 	"fmt"
+	"io"
 	"os"
 	"strconv"
 	"sync"
 	"sync/atomic"
 
 	"github.com/KryukovO/goph-keeper/internal/entities"
+	"github.com/KryukovO/goph-keeper/pkg/utils"
 )
+
+// FileCatalog описывает каталог файлов пользователей: [userID][file name]size.
+type FileCatalog map[int64]map[string]int64
+
+// Size возвращает суммарный объем файлов пользователя.
+func (fc FileCatalog) Size(userID int64) int64 {
+	res := int64(0)
+
+	files, ok := fc[userID]
+	if !ok {
+		return res
+	}
+
+	for _, size := range files {
+		res += size
+	}
+
+	return res
+}
 
 // LocalStorage реализует лдокальное файловое хранилище.
 type LocalStorage struct {
@@ -17,7 +42,7 @@ type LocalStorage struct {
 
 	storeFolder   string                          // storeFolder - папка для хранения файлов.
 	subscriptions map[int64]entities.Subscription // subscriptions - информация о подписках пользователей
-	files         map[int64]map[string]int64      // files - файлы пользователя: [userID][file name]size
+	files         FileCatalog                     // files - файлы пользователя
 }
 
 // subscriptionLimits хранит ограничения объема хранилища для подписок.
@@ -99,19 +124,53 @@ func (s *LocalStorage) Save(file entities.File) error {
 		return nil
 	}
 
+	limit := subscriptionLimits[s.subscriptions[file.UserID]]
+
+	if s.files.Size(file.UserID)+int64(file.Data.Len()) > limit {
+		return entities.ErrFileIsTooBig
+	}
+
+	folderPath := fmt.Sprintf("%s/%s", s.storeFolder, strconv.FormatInt(file.UserID, 10))
+
+	if _, err := os.Stat(folderPath); !os.IsNotExist(err) {
+		if err := os.Mkdir(folderPath, os.ModePerm); err != nil {
+			return err
+		}
+
+		s.files[file.UserID] = make(map[string]int64)
+	}
+
+	err := utils.SaveFile(folderPath, file.FileName, file.Data)
+	if err != nil {
+		return err
+	}
+
+	s.files[file.UserID][file.FileName] = int64(file.Data.Len())
+
 	return nil
 }
 
 // List возвращает список имен файлов пользователя в хранилище.
-func (s *LocalStorage) List(userID int64) ([]string, error) {
+func (s *LocalStorage) List(userID int64) []string {
 	s.mutex.RLock()
 	defer s.mutex.RUnlock()
 
 	if !s.open.Load() {
-		return []string{}, nil
+		return []string{}
 	}
 
-	return []string{}, nil
+	files, ok := s.files[userID]
+	if !ok {
+		return []string{}
+	}
+
+	res := make([]string, 0, len(files))
+
+	for file := range files {
+		res = append(res, file)
+	}
+
+	return res
 }
 
 // Load выгружает данные файла из хранилища в file по file.FileName и file.UserID.
@@ -122,6 +181,38 @@ func (s *LocalStorage) Load(file *entities.File) error {
 	if !s.open.Load() {
 		return nil
 	}
+
+	filePath := fmt.Sprintf(
+		"%s/%s/%s",
+		s.storeFolder, strconv.FormatInt(file.UserID, 10), file.FileName,
+	)
+
+	f, err := utils.GetFile(filePath)
+	if err != nil {
+		return err
+	}
+
+	defer f.Close()
+
+	reader := bufio.NewReader(f)
+	buffer := bytes.NewBuffer(make([]byte, 0))
+	part := make([]byte, 1024)
+
+	for {
+		var count int
+
+		if count, err = reader.Read(part); err != nil {
+			if errors.Is(err, io.EOF) {
+				break
+			}
+
+			return err
+		}
+
+		buffer.Write(part[:count])
+	}
+
+	file.Data = *buffer
 
 	return nil
 }
@@ -135,7 +226,12 @@ func (s *LocalStorage) Delete(file entities.File) error {
 		return nil
 	}
 
-	return nil
+	filePath := fmt.Sprintf(
+		"%s/%s/%s",
+		s.storeFolder, strconv.FormatInt(file.UserID, 10), file.FileName,
+	)
+
+	return utils.RemoveFile(filePath)
 }
 
 // SetSubscriptions устанавливает информацию о подписках пользователей.

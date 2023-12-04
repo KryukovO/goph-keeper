@@ -7,6 +7,7 @@ import (
 
 	"github.com/KryukovO/goph-keeper/api/serverpb"
 	"github.com/KryukovO/goph-keeper/internal/entities"
+	"github.com/golang/protobuf/ptypes/empty"
 
 	"github.com/rivo/tview"
 )
@@ -18,22 +19,25 @@ func (a *App) setupAuthDataMenu() {
 	ctx, cancel := context.WithTimeout(context.Background(), a.cfg.RequestTimeout)
 	defer cancel()
 
-	resp, err := a.client.AuthDataList(ctx, nil)
+	resp, err := a.client.AuthDataList(ctx, &empty.Empty{})
 	if err != nil {
 		a.logCh <- err.Error()
 
 		a.setupMainMenu()
+
+		return
 	}
 
 	data := resp.GetData()
 	sort.Slice(data, func(i, j int) bool {
-		return data[i].Resource < data[j].Login ||
-			!(data[i].Resource < data[j].Login) && data[i].Login < data[j].Login
+		return data[i].GetResource() < data[j].GetLogin() ||
+			!(data[i].GetResource() < data[j].GetLogin()) &&
+				data[i].GetLogin() < data[j].GetLogin()
 	})
 
 	for index, item := range data {
 		a.list.AddItem(
-			fmt.Sprintf("%s: %s", item.Resource, item.Login),
+			fmt.Sprintf("%s: %s", item.GetResource(), item.GetLogin()),
 			"",
 			rune(49+index),
 			nil,
@@ -51,13 +55,17 @@ func (a *App) setupAuthDataMenu() {
 		), 0, 1, false).
 		AddItem(tview.NewButton("Изменить").SetSelectedFunc(
 			func() {
+				if len(data) < a.list.GetCurrentItem()+1 {
+					return
+				}
+
 				item := data[a.list.GetCurrentItem()]
 
 				a.setupAuthDataForm(&entities.AuthData{
-					Resource: item.Resource,
-					Login:    item.Login,
-					Password: item.UserPassword,
-					Metadata: item.Metadata,
+					Resource: item.GetResource(),
+					Login:    item.GetLogin(),
+					Password: item.GetUserPassword(),
+					Metadata: item.GetMetadata(),
 				})
 
 				a.pages.SwitchToPage(formPage)
@@ -65,14 +73,18 @@ func (a *App) setupAuthDataMenu() {
 		), 0, 1, false).
 		AddItem(tview.NewButton("Удалить").SetSelectedFunc(
 			func() {
+				if len(data) < a.list.GetCurrentItem()+1 {
+					return
+				}
+
 				item := data[a.list.GetCurrentItem()]
 
 				ctx, cancel := context.WithTimeout(context.Background(), a.cfg.RequestTimeout)
 				defer cancel()
 
 				_, err := a.client.DeleteAuthData(ctx, &serverpb.DeleteAuthDataRequest{
-					Resource: item.Resource,
-					Login:    item.Login,
+					Resource: item.GetResource(),
+					Login:    item.GetLogin(),
 				})
 				if err != nil {
 					a.logCh <- err.Error()

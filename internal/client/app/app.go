@@ -47,7 +47,12 @@ func (a *App) Run() error {
 
 	defer close(a.logCh)
 
-	conn, err := grpc.Dial(a.cfg.Address, grpc.WithTransportCredentials(insecure.NewCredentials()))
+	conn, err := grpc.Dial(
+		a.cfg.Address,
+		grpc.WithTransportCredentials(insecure.NewCredentials()),
+		grpc.WithUnaryInterceptor(a.unaryInterceptor),
+		grpc.WithStreamInterceptor(a.streamInterceptor),
+	)
 	if err != nil {
 		return err
 	}

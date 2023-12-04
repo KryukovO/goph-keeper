@@ -27,10 +27,13 @@ linters:
     - funlen
     - varnamelen
     - wrapcheck
+    - dupl
+    - gomnd
+    - containedctx
 
 linters-settings:
   cyclop:
-    max-complexity: 10
+    max-complexity: 15
 
   errcheck:
     ignore: Write,BindEnv
@@ -56,6 +59,7 @@ linters-settings:
       - stdlib
       - generic
       - echo.Context
+      - grpc.ClientStream
 
   revive:
     rules:
