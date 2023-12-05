@@ -4,7 +4,6 @@ import (
 	"bufio"
 	"bytes"
 	"context"
-	"errors"
 	"fmt"
 	"io"
 	"path/filepath"
@@ -87,7 +86,7 @@ func (a *App) setupBinaryDataMenu() {
 
 					for {
 						resp, err := stream.Recv()
-						if errors.Is(err, io.EOF) {
+						if err == io.EOF {
 							file.Data = fileData
 
 							break
@@ -210,7 +209,7 @@ func (a *App) setupBinaryDataForm() {
 
 			for {
 				n, err := reader.Read(buffer)
-				if errors.Is(err, io.EOF) {
+				if err == io.EOF {
 					break
 				}
 
@@ -233,7 +232,7 @@ func (a *App) setupBinaryDataForm() {
 			}
 
 			_, err = stream.CloseAndRecv()
-			if err != nil {
+			if err != nil && err != io.EOF {
 				a.logCh <- fmt.Sprintf("Ошибка загрузки файла %s: %s", filePath, err.Error())
 
 				return

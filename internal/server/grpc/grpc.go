@@ -60,7 +60,7 @@ func (s KeeperServer) Registration(
 		Subscription: entities.MakeSubscription(req.GetSubscription()),
 	}
 
-	token, err := s.userUC.Registration(ctx, user)
+	userID, token, err := s.userUC.Registration(ctx, user)
 
 	if errors.Is(err, entities.ErrUserAlreadyExists) {
 		return nil, status.Error(codes.AlreadyExists, err.Error())
@@ -73,6 +73,8 @@ func (s KeeperServer) Registration(
 	if err != nil {
 		return nil, status.Error(codes.Internal, err.Error())
 	}
+
+	s.binaryUC.UpdateSubscription(ctx, userID, entities.MakeSubscription(req.GetSubscription()))
 
 	return &api.RegistrationResponse{Token: token}, nil
 }
@@ -177,7 +179,7 @@ func (s KeeperServer) AddBinaryData(stream api.Keeper_AddBinaryDataServer) error
 	for {
 		req, err := stream.Recv()
 
-		if errors.Is(err, io.EOF) {
+		if err == io.EOF {
 			break
 		}
 
@@ -511,7 +513,7 @@ func (s KeeperServer) BinaryData(req *api.BinaryDataRequest, stream api.Keeper_B
 
 	for {
 		n, err := data.Data.Read(buffer)
-		if errors.Is(err, io.EOF) {
+		if err == io.EOF {
 			break
 		}
 

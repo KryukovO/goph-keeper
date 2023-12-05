@@ -33,20 +33,22 @@ func NewUserUseCase(
 }
 
 // Registration выполняет регистрацию пользователя.
-func (uc *UserUseCase) Registration(ctx context.Context, user entities.User) (string, error) {
+func (uc *UserUseCase) Registration(ctx context.Context, user entities.User) (int64, string, error) {
 	ctx, cancel := context.WithTimeout(ctx, uc.timeout)
 	defer cancel()
 
 	if user.Login == "" || user.Password == "" {
-		return "", entities.ErrInvalidLoginPassword
+		return 0, "", entities.ErrInvalidLoginPassword
 	}
 
 	userID, err := uc.repo.CreateUser(ctx, user)
 	if err != nil {
-		return "", err
+		return 0, "", err
 	}
 
-	return utils.BuildJWTString(uc.secret, uc.tokenTTL, userID)
+	token, err := utils.BuildJWTString(uc.secret, uc.tokenTTL, userID)
+
+	return userID, token, err
 }
 
 // Authorization выполняет авторизацию пользователя.

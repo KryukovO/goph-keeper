@@ -114,7 +114,8 @@ func (m *Manager) AuthUnaryInterceptor(
 		userID int64
 	)
 
-	if md, ok := metadata.FromIncomingContext(ctx); ok {
+	md, ok := metadata.FromIncomingContext(ctx)
+	if ok {
 		values := md.Get("token")
 		if len(values) > 0 {
 			token = values[0]
@@ -126,7 +127,10 @@ func (m *Manager) AuthUnaryInterceptor(
 		return nil, status.Error(codes.Unauthenticated, err.Error())
 	}
 
-	userCtx := metadata.AppendToOutgoingContext(ctx, "userID", strconv.FormatInt(userID, 10))
+	newMD := md.Copy()
+	newMD.Append("userID", strconv.FormatInt(userID, 10))
+
+	userCtx := metadata.NewIncomingContext(ctx, newMD)
 
 	return handler(userCtx, req)
 }
@@ -143,7 +147,8 @@ func (m *Manager) AuthStreamInterceptor(
 
 	sw := newStreamWrapper(stream)
 
-	if md, ok := metadata.FromIncomingContext(sw.Context()); ok {
+	md, ok := metadata.FromIncomingContext(sw.Context())
+	if ok {
 		values := md.Get("token")
 		if len(values) > 0 {
 			token = values[0]
@@ -155,7 +160,10 @@ func (m *Manager) AuthStreamInterceptor(
 		return status.Error(codes.Unauthenticated, err.Error())
 	}
 
-	userCtx := metadata.AppendToOutgoingContext(sw.Context(), "userID", strconv.FormatInt(userID, 10))
+	newMD := md.Copy()
+	newMD.Append("userID", strconv.FormatInt(userID, 10))
+
+	userCtx := metadata.NewIncomingContext(sw.Context(), newMD)
 	sw.SetContext(userCtx)
 
 	return handler(srv, sw)

@@ -11,7 +11,7 @@ import (
 // с репозиторием для управления пользователями.
 type User interface {
 	// Registration выполняет регистрацию пользователя.
-	Registration(ctx context.Context, user entities.User) (token string, err error)
+	Registration(ctx context.Context, user entities.User) (userID int64, token string, err error)
 	// Authorization выполняет авторизацию пользователя.
 	Authorization(ctx context.Context, user entities.User) (token string, err error)
 }

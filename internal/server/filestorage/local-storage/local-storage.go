@@ -4,7 +4,6 @@ package localstorage
 import (
 	"bufio"
 	"bytes"
-	"errors"
 	"fmt"
 	"io"
 	"os"
@@ -124,7 +123,8 @@ func (s *LocalStorage) Save(file entities.File) error {
 		return nil
 	}
 
-	limit := subscriptionLimits[s.subscriptions[file.UserID]]
+	subscription := s.subscriptions[file.UserID]
+	limit := subscriptionLimits[subscription]
 
 	if s.files.Size(file.UserID)+int64(file.Data.Len()) > limit {
 		return entities.ErrFileIsTooBig
@@ -132,7 +132,7 @@ func (s *LocalStorage) Save(file entities.File) error {
 
 	folderPath := fmt.Sprintf("%s/%s", s.storeFolder, strconv.FormatInt(file.UserID, 10))
 
-	if _, err := os.Stat(folderPath); !os.IsNotExist(err) {
+	if _, err := os.Stat(folderPath); os.IsNotExist(err) {
 		if err := os.Mkdir(folderPath, os.ModePerm); err != nil {
 			return err
 		}
@@ -202,7 +202,7 @@ func (s *LocalStorage) Load(file *entities.File) error {
 		var count int
 
 		if count, err = reader.Read(part); err != nil {
-			if errors.Is(err, io.EOF) {
+			if err == io.EOF {
 				break
 			}
 
@@ -231,7 +231,14 @@ func (s *LocalStorage) Delete(file entities.File) error {
 		s.storeFolder, strconv.FormatInt(file.UserID, 10), file.FileName,
 	)
 
-	return utils.RemoveFile(filePath)
+	err := utils.RemoveFile(filePath)
+	if err != nil {
+		return err
+	}
+
+	delete(s.files[file.UserID], file.FileName)
+
+	return nil
 }
 
 // SetSubscriptions устанавливает информацию о подписках пользователей.

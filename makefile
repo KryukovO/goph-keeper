@@ -10,5 +10,12 @@ lint:
 	golangci-lint run ./...
 
 build:
-	go build -o cmd/client/client -ldflags "-X main.buildVersion=${BUILDVERSION} -X main.buildDate=${BUILDDATE}" cmd/client/main.go
-	go build -o cmd/server/server -ldflags "-X main.buildVersion=${BUILDVERSION} -X main.buildDate=${BUILDDATE}" cmd/server/main.go
+	# Linux
+	GOOS=linux GOARCH=amd64 go build -o build/client/client_linux_amd64 -ldflags "-X main.buildVersion=${BUILDVERSION} -X main.buildDate=${BUILDDATE}" cmd/client/main.go
+	GOOS=linux GOARCH=amd64 go build -o build/server/server_linux_amd64 -ldflags "-X main.buildVersion=${BUILDVERSION} -X main.buildDate=${BUILDDATE}" cmd/server/main.go
+	# Windows
+	GOOS=windows GOARCH=amd64 go build -o build/client/client_win_amd64.exe -ldflags "-X main.buildVersion=${BUILDVERSION} -X main.buildDate=${BUILDDATE}" cmd/client/main.go
+	GOOS=windows GOARCH=amd64 go build -o build/server/server_win_amd64.exe -ldflags "-X main.buildVersion=${BUILDVERSION} -X main.buildDate=${BUILDDATE}" cmd/server/main.go
+	# MacOS
+	GOOS=darwin GOARCH=amd64 go build -o build/client/client_darwin_amd64 -ldflags "-X main.buildVersion=${BUILDVERSION} -X main.buildDate=${BUILDDATE}" cmd/client/main.go
+	GOOS=darwin GOARCH=amd64 go build -o build/server/server_darwin_amd64 -ldflags "-X main.buildVersion=${BUILDVERSION} -X main.buildDate=${BUILDDATE}" cmd/server/main.go

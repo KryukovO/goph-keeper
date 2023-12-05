@@ -45,7 +45,7 @@ func (a *App) setupLoginForm() {
 		bufUser.Login = login
 	})
 
-	a.form.AddInputField("Пароль", "", 20, nil, func(password string) {
+	a.form.AddPasswordField("Пароль", "", 20, '*', func(password string) {
 		bufUser.Password = password
 	})
 
