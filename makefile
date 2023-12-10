@@ -1,4 +1,4 @@
-.PHONY: mockgen build proto lint
+.PHONY: mockgen build proto lint test cover cover-html
 
 BUILDDATE=$(shell date +'%d-%m-%Y')
 BUILDVERSION=v0.0.1
@@ -29,14 +29,14 @@ mockgen:
 	mockgen -destination internal/server/filestorage/mocks/storage.go -package mocks github.com/KryukovO/goph-keeper/internal/server/filestorage FileStorage
 
 test:
-	go test -v -timeout 30s -race ./...
+	CGO_ENABLED=1 go test -v -timeout 30s -race ./...
 
 cover:
-	go test -timeout 30s -race -coverprofile=coverage.out ./...
+	CGO_ENABLED=1 go test -timeout 30s -race -coverprofile=coverage.out ./...
 	go tool cover -func=coverage.out
 	rm coverage.out
 
 cover-html:
-	go test -timeout 30s -race -coverprofile=coverage.out ./...
+	CGO_ENABLED=1 go test -timeout 30s -race -coverprofile=coverage.out ./...
 	go tool cover -html=coverage.out -o coverage.html
 	rm coverage.out
