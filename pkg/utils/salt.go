@@ -1,0 +1,26 @@
+// Package utils содержит вспомогательные функции проекта.
+package utils
+
+import (
+	"math/rand"
+	"strings"
+)
+
+const (
+	saltLength = 32
+	alphabet   = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
+)
+
+// GenerateRandomSalt возвращает случайную буквоциферную посоледовательность.
+func GenerateRandomSalt(src rand.Source) (string, error) {
+	var salt strings.Builder
+
+	rnd := rand.New(src)
+	runes := []rune(alphabet)
+
+	for i := 0; i < saltLength; i++ {
+		salt.WriteRune(runes[rnd.Intn(len(runes))])
+	}
+
+	return salt.String(), nil
+}

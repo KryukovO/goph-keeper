@@ -1,0 +1,87 @@
+issues:
+  exclude:
+    - "Error return value of `tx.Rollback` is not checked"
+
+linters:
+  enable-all: true
+  disable:
+    - nosnakecase # "deprecated". Заменено на revive(var-naming) 
+    - scopelint # "deprecated". Заменено на exportloopref
+    - varcheck # "deprecated". Заменено на unused
+    - exhaustive
+    - exhaustivestruct # "deprecated". Заменено на exhaustruct
+    - deadcode # "deprecated". Заменено на unused
+    - structcheck # "deprecated". Заменено на unused
+    - golint # "deprecated". Заменено на revive
+    - ifshort # "deprecated"
+    - interfacer # "deprecated"
+    - maligned # "deprecated". Заменено на govet 'fieldalignment'
+    - gci # golangci-lint с ним не запускается
+    - depguard
+    - testpackage 
+    - exhaustruct
+    - paralleltest
+    - execinquery
+    - forbidigo
+    - gochecknoglobals
+    - funlen
+    - varnamelen
+    - wrapcheck
+
+linters-settings:
+  cyclop:
+    max-complexity: 10
+
+  errcheck:
+    ignore: Write,BindEnv
+
+  gocognit:
+    min-complexity: 35
+
+  gomnd:
+    ignored-numbers:
+      - 1024
+
+  gosec:
+    excludes:
+      - G108
+      - G114
+      - G404
+      
+  ireturn:
+    allow:
+      - anon
+      - error
+      - empty
+      - stdlib
+      - generic
+      - echo.Context
+
+  revive:
+    rules:
+      - name: exported
+        severity: warning
+        disabled: false
+        arguments:
+          - "disableStutteringCheck"
+          - "checkPrivateReceivers"
+          - "sayRepetitiveInsteadOfStutters"
+
+  tagliatelle:
+    case:
+      rules:
+        json: snake
+
+  testifylint:
+    enable:
+      - bool-compare
+      - compares
+      - empty
+      - error-is-as
+      - error-nil
+      - expected-actual
+      - float-compare
+      - len
+      - suite-dont-use-pkg
+      - suite-extra-assert-call
+      - suite-thelper
